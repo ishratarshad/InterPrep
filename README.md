@@ -1,133 +1,90 @@
-InterPrep: Voice-Interactive AI Interview Trainer
-Overview
+# InterPrep: Voice-Interactive AI Interview Trainer
 
-InterPrep is a voice-interactive AI system designed to help students prepare for technical interviews. While many learners practice coding problems on platforms like LeetCode, they often struggle to communicate their thought process clearly during real interviews. InterPrep bridges this gap by simulating live interview scenarios, providing structured feedback, and generating adaptive lesson plans tailored to each user’s progress.
+## Overview
+Many students practice LeetCode problems but struggle to explain their thought process clearly in technical interviews.  
+**InterPrep** is a voice-interactive system that helps bridge this gap by:  
+- Simulating interview practice with spoken explanations  
+- Providing structured feedback on clarity, correctness, and complexity  
+- Generating adaptive study plans tailored to user progress  
 
-**Features**
+---
 
-- Voice-Interactive Practice – Users explain coding problems out loud; speech-to-text pipelines capture and transcribe their responses.
+## Features
+- Voice-Interactive Practice – Explain solutions out loud, transcribed using Whisper or Google Speech-to-Text  
+- Problem Classification – Categorizes problems into algorithmic patterns such as arrays, graphs, dynamic programming, greedy, binary search, and backtracking  
+- Feedback Engine – Evaluates user explanations for completeness, edge-case handling, and complexity analysis  
+- Adaptive Lesson Plans – Personalized weekly checklists based on performance  
+- Progress Dashboard – Tracks learning outcomes and improvement trends  
 
-- Problem Classification – Problems categorized into key algorithmic patterns (e.g., arrays, graphs, DP, greedy, binary search, backtracking, etc.).
+---
 
-- Automated Feedback – Evaluation of clarity, correctness, edge-case handling, and complexity analysis.
+## Tech Stack
+- Languages: Python  
+- ML/NLP: Hugging Face Transformers, scikit-learn, Pandas, NumPy  
+- Speech Recognition: Whisper API, Google Speech-to-Text  
+- Backend: FastAPI or Flask  
+- Frontend: Streamlit or React  
+- Database: PostgreSQL or SQLite  
 
-- Adaptive Lesson Plans – Personalized weekly checklists based on performance and recurring weaknesses.
+---
 
-- Progress Dashboard – Tracks solved problems, explanation quality, and long-term growth.
+## Datasets
 
-**Objectives**
+### Algorithm & Problem Data
+- LeetCode Problem Dataset (Kaggle) – problem statements and metadata  
+- LeetCode Solutions Dataset – canonical solutions and complexity notes  
+- Curated dataset of 120–200 problems across 10+ categories  
 
-Build an AI interviewer that evaluates clarity, correctness, and completeness of user explanations.
+### Speech / Interview Data
+- People’s Speech (MLCommons) – large-scale transcripts  
+- Common Voice (Mozilla) – multilingual and diverse speech  
+- MIT Interview Dataset – mock interview recordings with ratings  
+- Switchboard and Buckeye Corpora – conversational dialogue  
 
-Classify problems into algorithm categories and generate personalized problem sets.
+---
 
-Provide structured feedback on solution quality, communication, and complexity.
+## Evaluation Metrics
+- Problem classification accuracy (macro F1 score)  
+- Speech-to-text transcription quality (word error rate)  
+- Feedback usefulness (rubric-based survey)  
+- Learning signal (measured improvement across repeated sessions)  
 
-Deliver adaptive study plans that adjust to the user’s learning curve.
+---
 
-**System Architecture
-**
-Speech Recognition – Convert voice to text (OpenAI Whisper / Google STT).
+## Team Roles
+- Automatic Speech Recognition & Backend – speech pipeline and API development  
+- NLP Classifier – problem categorization and explanation analysis  
+- Feedback Engine – rubric design and scoring logic  
+- Frontend & Dashboard – visualization, progress tracking, and UI  
 
-NLP Analysis – Analyze user explanations for semantic similarity, completeness, and algorithmic reasoning.
+---
 
-Feedback Engine – Compare user responses against expected patterns and key solution ideas.
+## Timeline (6 Weeks)
+- Week 1: Scope definition, literature review, UX sketches  
+- Week 2: Dataset collection and speech-to-text pipeline  
+- Week 3: Baseline classifier and feedback rules  
+- Week 4: Lesson plan generator and dashboard  
+- Week 5: Model tuning and system integration  
+- Week 6: Testing, polish, final report, and demo  
 
-Lesson Plan Generator – Adaptive recommender suggesting problems and readings.
+---
 
-Dashboard – Visualizes progress and feedback trends.
+## Risks and Mitigations
+- ASR Noise – apply noise filters and allow transcript editing before scoring  
+- Sparse Labels – begin with rule-based templates, expand gradually if time permits  
+- Scope Creep – restrict MVP to ten problem categories and one-minute responses  
 
-**Tech Stack**
-- Languages & Frameworks: Python, FastAPI/Flask, Streamlit/React
+---
 
-- ML/NLP: Hugging Face Transformers, scikit-learn, Pandas, NumPy
+## Stretch Goals
+- Retrieval of similar problems with vector embeddings  
+- Runtime-based complexity validation  
+- Multi-turn dialogues with adaptive hints  
 
-- Speech Recognition: Whisper API, Google STT
+---
 
-- Database: PostgreSQL / SQLite
-
-- Visualization: Streamlit, Plotly
-
-**Dataset Plan**
-- Algorithm & Problem Data
-
-- [LeetCode Problem Dataset (Kaggle)] – problem statements + metadata
-
-- [LeetCode Solutions Dataset] – canonical solutions + complexity analysis
-
-- Curated dataset of 120–200 problems across 10+ algorithm categories
-
-- Speech / Interview Data
-
-People’s Speech (MLCommons) – large-scale open speech dataset
-
-Common Voice (Mozilla) – multilingual, diverse accents
-
-MIT Interview Dataset – mock interviews with ratings
-
-Switchboard / Buckeye Corpora – conversational transcripts
-
-**Deliverables**
-Prototype App – Voice-interactive technical interview trainer
-
-Evaluation Dashboard – Tracks user progress and weaknesses
-
-Lesson Plan Generator – Personalized weekly study checklists
-
-Final Report & Demo Video
-
-Evaluation Metrics
-
-Problem Classification Accuracy (macro F1 score)
-
-Speech-to-Text Quality (Word Error Rate %)
-
-Feedback Usefulness (rubric-based surveys)
-
-Learning Signal (improvement across repeated problem sets)
-
-Roles (4-Person Team)
-
-ASR & Backend API – Speech pipeline + API endpoints
-
-NLP & Classifier – Problem classification and explanation analysis
-
-Feedback Rubric – Rules + models for evaluation design
-
-Frontend & Dashboard – UI, visualization, progress tracking
-
-**Timeline (6 Weeks)**
-Week 1: Scope, literature review, UX sketches, data labeling protocol
-
-Week 2: Speech pipeline + dataset ingestion
-
-Week 3: Baseline problem classifier + feedback rubric prototype
-
-Week 4: Lesson plan generator + evaluation dashboard
-
-Week 5: Model tuning, error analysis, refine evaluation features
-
-Week 6: System integration, polish, testing, final report & demo
-
-**Risks & Mitigations**
-ASR Noise – Encourage headset use, editable transcripts before scoring
-
-Sparse Labels – Start with rule-based templates, expand if time allows
-
-Scope Creep – Lock MVP to 10 categories & 1-min responses before scaling
-
-**Stretch Goals**
-Retrieval of similar problems via vector embeddings
-
-Complexity validation via runtime benchmarking
-
-Multi-turn dialogue with adaptive hints
-
-**Expected Impact**
-Bridges the gap between solving problems and communicating solutions.
-
-Builds structured, adaptive study plans that focus on weaknesses.
-
-Turns random problem-solving into a guided, data-driven interview prep roadmap.
-
-Helps students gain confidence in both coding and communication during interviews.
+## Expected Impact
+- Moves beyond coding practice into communication skill development  
+- Provides a structured and adaptive roadmap for technical interview preparation  
+- Improves both problem-solving performance and explanation clarity  
+- Helps students prepare more effectively and gain confidence in real interviews  
