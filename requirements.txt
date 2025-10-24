@@ -1,0 +1,6 @@
+streamlit
+streamlit-navigation-bar
+pandas
+numpy
+altair
+matplotlib
