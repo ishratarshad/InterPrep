@@ -7,7 +7,7 @@ from pages import dashboard
 
 st.set_page_config(page_title="InterPrep", layout="wide")
 
-# hide sidebar; use hamburger menu
+# hide sidebar
 hide_sidebar = """
     <style>
     [data-testid="stSidebar"] {display: none;}
@@ -18,7 +18,7 @@ st.markdown(hide_sidebar, unsafe_allow_html=True)
 
 # navbar buttons, fill columns
 pages = {
-    "Home": "about",
+    "About": "about",
     "Practice": "select_criteria",
     "Dashboard": "dashboard"
 }
