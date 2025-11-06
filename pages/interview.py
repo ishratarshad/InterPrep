@@ -22,10 +22,10 @@ def render():
     # redirect: new question, results
     col1, col2 = st.columns(2)
 
-    criteria_clicked = col1.button("Practice New")
-    results_clicked = col2.button("View Results")
+    practice_new_clicked = col1.button("Practice New", key="practice_new_btn")
+    results_clicked = col2.button("View Results", key="results_btn")
 
-    if criteria_clicked:
+    if practice_new_clicked:
         st.session_state.page = "select_criteria"
 
     if results_clicked:

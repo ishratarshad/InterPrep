@@ -16,8 +16,8 @@ def render():
     # redirect: new question, dashboard
     col1, col2 = st.columns(2)
 
-    practice_new_clicked = col1.button("Practice New")
-    dashboard_clicked = col2.button("Dashboard")
+    practice_new_clicked = col1.button("Practice New", key="practice_new_btn")
+    dashboard_clicked = col2.button("Dashboard", key="dashboard_btn")
 
     if practice_new_clicked:
         st.session_state.page = "select_criteria"
