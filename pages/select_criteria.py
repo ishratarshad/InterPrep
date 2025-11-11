@@ -1,6 +1,29 @@
 import streamlit as st
 import random
+import shared.navbar as navbar_module
 
+st.set_page_config(page_title="Select Criteria", layout="wide", initial_sidebar_state="collapsed")
+
+hide_sidebar = """
+    <style>
+    button[title="Toggle sidebar"] {display: none;}
+    [data-testid="stSidebar"] {display: none;}
+    [data-testid="stSidebarNav"] {display: none;}
+    </style>
+"""
+st.markdown(hide_sidebar, unsafe_allow_html=True)
+
+pages = {
+    "About": "about",
+    "Practice": "select_criteria",
+    "Dashboard": "dashboard"
+}
+
+navbar_module.apply_navbar_styles()
+navbar_module.navbar(pages, st.session_state.page)
+
+
+## --
 # TODO: replace w/ question-bank sourced from dataset/file/API/database/etc.
 QUESTIONS = [
     {"id": 1, "question": "Implement binary search.", "difficulty": "easy", "type": "algorithm"},
@@ -12,32 +35,31 @@ QUESTIONS = [
 def filter_questions(questions, difficulty, qtype):
     return [q for q in questions if q['difficulty'] in difficulty and q['type'] in qtype]
 
-def render():
-    st.header("1: Select Criteria")
+st.header("1: Select Criteria")
 
-    # TODO: improve criteria for filtering (eg. leetcode)
-    difficulty = st.multiselect("Difficulty", ["easy", "medium", "hard"], key="difficulty")
-    qtype = st.multiselect("Question Type", ["algorithm", "concept", "system design"], key="qtype")
+# TODO: improve criteria for filtering (eg. leetcode)
+difficulty = st.multiselect("Difficulty", ["easy", "medium", "hard"], key="difficulty")
+qtype = st.multiselect("Question Type", ["algorithm", "concept", "system design"], key="qtype")
 
-    st.write("")
-    st.write("")
-    st.write("")
-    st.write("")
-    st.write("")
-    st.write("")
-    spc1, col, spc2 = st.columns([1, 1, 1])
-    with col:
-        if st.button("Start Interview", width='stretch'):
-            if not difficulty or not qtype:
-                st.error("Select both difficulty and question type.")
+st.write("")
+st.write("")
+st.write("")
+st.write("")
+st.write("")
+st.write("")
+spc1, col, spc2 = st.columns([1, 1, 1])
+with col:
+    if st.button("Start Interview", width='stretch'):
+        if not difficulty or not qtype:
+            st.error("Select both difficulty and question type.")
+        else:
+            filtered = filter_questions(QUESTIONS, difficulty, qtype)
+            if filtered:
+                st.session_state.filtered_questions = filtered
+                st.session_state.current_question = None
+                st.session_state.transcript = ""
+                st.session_state.feedback = ""
+                st.switch_page("pages/interview.py")
             else:
-                filtered = filter_questions(QUESTIONS, difficulty, qtype)
-                if filtered:
-                    st.session_state.filtered_questions = filtered
-                    st.session_state.current_question = None
-                    st.session_state.transcript = ""
-                    st.session_state.feedback = ""
-                    st.session_state.page = "interview"
-                else:
-                    st.error("No questions match selection.")
-            st.rerun()
+                st.error("No questions match selection.")
+        st.rerun()

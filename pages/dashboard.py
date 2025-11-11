@@ -3,33 +3,55 @@ import pandas as pd
 import numpy as np
 import altair as alt
 import matplotlib.pyplot as plt
+import shared.navbar as navbar_module
 
-def render():
-    st.header("Dashboard")
+st.set_page_config(page_title="Dashboard", layout="wide", initial_sidebar_state="collapsed")
 
-    ## --
-    # st.subheader("Stats/Charts/Metrics/Viz?")
+hide_sidebar = """
+    <style>
+    button[title="Toggle sidebar"] {display: none;}
+    [data-testid="stSidebar"] {display: none;}
+    [data-testid="stSidebarNav"] {display: none;}
+    </style>
+"""
+st.markdown(hide_sidebar, unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns(3)
+pages = {
+    "About": "about",
+    "Practice": "select_criteria",
+    "Dashboard": "dashboard"
+}
 
-    col1.metric("Interviews Prepped", 14)
-    col2.metric("Average Score", "78.1/100")
-    col3.metric("Success Rate", "86%")
+navbar_module.apply_navbar_styles()
+navbar_module.navbar(pages, st.session_state.page)
 
-    st.subheader("Weekly progress")
 
-    data = pd.DataFrame({
-        "Week": [f"Week {i}" for i in range(1, 6)],
-        "Avg Interview Score": np.random.uniform(60, 95, 5),
-    })
+## --
+st.header("Dashboard")
 
-    chart = (
-        alt.Chart(data)
-        .mark_line(point=True)
-        .encode(
-            x=alt.X("Week", axis=alt.Axis(labelAngle=0)),
-            y="Avg Interview Score"
-        )
+## --
+# st.subheader("Stats/Charts/Metrics/Viz?")
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Interviews Prepped", 14)
+col2.metric("Average Score", "78.1/100")
+col3.metric("Success Rate", "86%")
+
+st.subheader("Weekly progress")
+
+data = pd.DataFrame({
+    "Week": [f"Week {i}" for i in range(1, 6)],
+    "Avg Interview Score": np.random.uniform(60, 95, 5),
+})
+
+chart = (
+    alt.Chart(data)
+    .mark_line(point=True)
+    .encode(
+        x=alt.X("Week", axis=alt.Axis(labelAngle=0)),
+        y="Avg Interview Score"
     )
+)
 
-    st.altair_chart(chart, width='stretch')
+st.altair_chart(chart, width='stretch')
