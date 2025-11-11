@@ -4,3 +4,4 @@ pandas
 numpy
 altair
 matplotlib
+streamlit_code_editor
