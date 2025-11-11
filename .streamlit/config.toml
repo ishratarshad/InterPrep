@@ -1,0 +1,23 @@
+[theme]
+base = "light"
+
+# primary green -- for active elements like buttons, highlights, links
+primaryColor = "#2E7D32"
+
+# main background
+backgroundColor = "#FBFBF9"
+
+# sidebar background
+secondaryBackgroundColor = "#DCE7E4"
+
+# text color -- generic, readable
+textColor = "#2E2E2E"
+
+# font style
+font = "sans serif"
+
+# border color --for inputs, cards
+borderColor = "#F4C2C2"
+
+# link color
+linkColor = "#388E3C"
