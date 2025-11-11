@@ -19,16 +19,25 @@ def render():
     difficulty = st.multiselect("Difficulty", ["easy", "medium", "hard"], key="difficulty")
     qtype = st.multiselect("Question Type", ["algorithm", "concept", "system design"], key="qtype")
 
-    if st.button("Start Interview"):
-        if not difficulty or not qtype:
-            st.error("Select both difficulty and question type.")
-        else:
-            filtered = filter_questions(QUESTIONS, difficulty, qtype)
-            if filtered:
-                st.session_state.filtered_questions = filtered
-                st.session_state.current_question = None
-                st.session_state.transcript = ""
-                st.session_state.feedback = ""
-                st.session_state.page = "interview"
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
+    spc1, col, spc2 = st.columns([1, 1, 1])
+    with col:
+        if st.button("Start Interview", width='stretch'):
+            if not difficulty or not qtype:
+                st.error("Select both difficulty and question type.")
             else:
-                st.error("No questions match selection.")
+                filtered = filter_questions(QUESTIONS, difficulty, qtype)
+                if filtered:
+                    st.session_state.filtered_questions = filtered
+                    st.session_state.current_question = None
+                    st.session_state.transcript = ""
+                    st.session_state.feedback = ""
+                    st.session_state.page = "interview"
+                else:
+                    st.error("No questions match selection.")
+            st.rerun()

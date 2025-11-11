@@ -1,0 +1,8 @@
+primaryColor = "#2E7D32"
+backgroundColor = "#FBFBF9"
+textColor = "#2E2E2E"
+borderColor = "#F4C2C2"
+linkColor = "#388E3C"
+buttonBgColor = "#D9EAD3"
+buttonHoverColor = "#5AC639"
+buttonBorderColor = "#72D87B"
