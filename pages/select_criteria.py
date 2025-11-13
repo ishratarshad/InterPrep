@@ -59,6 +59,7 @@ with col:
                 st.session_state.current_question = None
                 st.session_state.transcript = ""
                 st.session_state.feedback = ""
+                st.session_state.page = 'interview'
                 st.switch_page("pages/interview.py")
             else:
                 st.error("No questions match selection.")

@@ -1,8 +1,9 @@
 import streamlit as st
-from code_editor import code_editor
+import shared.navbar as navbar_module
+from streamlit_ace import st_ace
 import random
 import os
-import shared.navbar as navbar_module
+import globals
 
 st.set_page_config(page_title="Practice", layout="wide", initial_sidebar_state="collapsed")
 
@@ -27,7 +28,6 @@ navbar_module.navbar(pages, st.session_state.page)
 
 ## --
 st.header("2: Interview Question")
-user_code_obj = None
 
 filtered_questions = st.session_state.get("filtered_questions", [])
 if not filtered_questions:
@@ -39,18 +39,68 @@ if st.session_state.get("current_question") is None:
 st.markdown("#### Question:")
 st.write(st.session_state.current_question["question"])
 
-if "user_code_obj" in st.session_state:
-    user_code_obj = st.session_state["user_code_obj"]
 
+## ace editor - code IDE session states
+def update_session_state():
+    lang_name = st.session_state["language_select"]
+    if lang_name not in globals.ACE_LANG_OPTIONS:
+        lang_name = list(globals.ACE_LANG_OPTIONS.keys())[0]
+
+    st.session_state["selected_lang"] = lang_name
+    st.session_state["selected_lang_extension"] = globals.ACE_LANG_OPTIONS[lang_name]["extension"]
+    st.session_state["initial_code"] = globals.ACE_LANG_OPTIONS[lang_name]["placeholder"]
+
+if "language_select" not in st.session_state or st.session_state["language_select"] not in globals.ACE_LANG_OPTIONS:
+    st.session_state["language_select"] = list(globals.ACE_LANG_OPTIONS.keys())[0]
+if "selected_lang" not in st.session_state or st.session_state["selected_lang"] not in globals.ACE_LANG_OPTIONS:
+    st.session_state["selected_lang"] = st.session_state["language_select"]
+if "selected_lang_extension" not in st.session_state:
+    st.session_state["selected_lang_extension"] = globals.ACE_LANG_OPTIONS[st.session_state["language_select"]]["extension"]
+if "initial_code" not in st.session_state:
+    st.session_state["initial_code"] = globals.ACE_LANG_OPTIONS[st.session_state["language_select"]]["placeholder"]
+
+# ace editor langs
+lang_display = st.selectbox(
+    "Select Programming Language",
+    options=list(globals.ACE_LANG_OPTIONS.keys()),
+    index=list(globals.ACE_LANG_OPTIONS.keys()).index(st.session_state["language_select"]),
+    key="language_select",
+    on_change=update_session_state
+)
+# file extension
+selected_lang_ext = st.session_state["selected_lang_extension"]
+# placeholder
+initial_code = st.session_state["initial_code"]
+
+
+# save code - filepath & reset
+code_folder = 'code'
+save_destination = f"user_code.{selected_lang_ext}"
+
+if not os.path.exists(code_folder):
+    os.makedirs(code_folder)
+
+file_path = os.path.join(code_folder, save_destination)
+
+
+## -- 
 col1, col2 = st.columns([1.5, 0.5])
 
 # EMBEDDED CODING IDE
 with col1:
-    # st.info("Coding IDE")
-    initial_code = '''def placeholder():\n    print("Hello World")'''
-    user_code = code_editor(initial_code, lang="python")
-    if user_code:
-        user_code_obj = user_code
+    code = st_ace(
+        value=initial_code,
+        language=selected_lang_ext,
+        auto_update=True,
+        theme='dracula',
+        key='ace_editor',
+    )
+
+if st.button("Save Code"):
+    with open(file_path, "w") as f:
+        f.write(code)
+
+
 
 # AUDIO - show TRANSCRIPT in Results
 with col2:
@@ -81,5 +131,7 @@ if practice_new_clicked:
     st.switch_page("pages/select_criteria.py")
 
 if results_clicked:
-    st.session_state["user_code_obj"] = user_code_obj  
+    st.session_state.page = 'results'
+    with open(file_path, "w") as f:
+        f.write(code)
     st.switch_page("pages/results.py")

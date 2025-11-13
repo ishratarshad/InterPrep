@@ -1,5 +1,7 @@
 import streamlit as st
 import shared.navbar as navbar_module
+import globals
+import os
 
 st.set_page_config(page_title="Results", layout="wide", initial_sidebar_state="collapsed")
 
@@ -27,13 +29,17 @@ st.header("3: Evaluation & Feedback")
 
 col1, col2 = st.columns([1.5, 1])
 with col1:
-    user_code_obj = st.session_state.get("user_code_obj", None)
-    if user_code_obj:
-        code_text = user_code_obj.get("text") if isinstance(user_code_obj, dict) else user_code_obj
-        st.code(code_text, language="python")
-        print("User code object:", user_code_obj)
-        print("Session state keys:", st.session_state.keys())
-        print("Current stored code:", st.session_state.get("user_code_obj"))
+    selected_lang = st.session_state.get("selected_lang")
+    if selected_lang not in globals.ACE_LANG_OPTIONS:
+        selected_lang = list(globals.ACE_LANG_OPTIONS.keys())[0]
+
+    selected_lang_ext = globals.ACE_LANG_OPTIONS[selected_lang]["extension"]
+    file_path = os.path.join("code", f"user_code.{selected_lang_ext}")
+
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding="utf-8") as f:
+            code_text = f.read()
+        st.code(code_text, language=selected_lang)
     else:
         st.info("No code submitted yet.")
 
@@ -61,4 +67,5 @@ if practice_new_clicked:
     st.switch_page("pages/select_criteria.py")
 
 if dashboard_clicked:
+    st.session_state.page = 'dashboard'
     st.switch_page("pages/dashboard.py")
