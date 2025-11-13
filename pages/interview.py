@@ -3,6 +3,7 @@ import shared.navbar as navbar_module
 from streamlit_ace import st_ace
 import random
 import os
+import time
 import globals
 
 st.set_page_config(page_title="Practice", layout="wide", initial_sidebar_state="collapsed")
@@ -83,6 +84,14 @@ if not os.path.exists(code_folder):
 file_path = os.path.join(code_folder, save_destination)
 
 
+def success_message():
+    success_placeholder = st.empty()
+    success_placeholder.success("Code saved!")
+    time.sleep(0.5)
+    success_placeholder.empty()
+
+
+
 ## -- 
 col1, col2 = st.columns([1.5, 0.5])
 
@@ -99,6 +108,7 @@ with col1:
 if st.button("Save Code"):
     with open(file_path, "w") as f:
         f.write(code)
+    success_message()
 
 
 
