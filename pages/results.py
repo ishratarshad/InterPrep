@@ -3,16 +3,7 @@ import shared.navbar as navbar_module
 import globals
 import os
 
-st.set_page_config(page_title="Results", layout="wide", initial_sidebar_state="collapsed")
-
-hide_sidebar = """
-    <style>
-    button[title="Toggle sidebar"] {display: none;}
-    [data-testid="stSidebar"] {display: none;}
-    [data-testid="stSidebarNav"] {display: none;}
-    </style>
-"""
-st.markdown(hide_sidebar, unsafe_allow_html=True)
+st.set_page_config(page_title="Results", layout="wide")
 
 pages = {
     "About": "about",

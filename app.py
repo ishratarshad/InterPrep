@@ -2,20 +2,10 @@ import streamlit as st
 import shared.navbar as navbar_module
 import globals
 
-st.set_page_config(page_title="InterPrep", layout="wide", initial_sidebar_state="collapsed")
-
-# hide sidebar
-hide_sidebar = """
-    <style>
-    button[title="Toggle sidebar"] {display: none;}
-    [data-testid="stSidebar"] {display: none;}
-    [data-testid="stSidebarNav"] {display: none;}
-    </style>
-"""
-st.markdown(hide_sidebar, unsafe_allow_html=True)
+st.set_page_config(page_title="InterPrep", layout="wide")
 
 if "page" not in st.session_state:
-    st.session_state.page = "about"
+    st.session_state.page = "home"
     st.rerun()
 
 # navbar buttons, fill columns
