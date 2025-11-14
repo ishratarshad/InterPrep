@@ -21,12 +21,14 @@ class LeetCodeManager:
             'backtracking': ['backtrack'],
         }
         
-        text_col = 'title'
-        if 'description' in self.df.columns:
-            text_col = 'description'
+        # Combine title and description for better classification
+        self.df['combined_text'] = (
+            self.df['title'].fillna('') + ' ' + 
+            self.df['description'].fillna('')
+        )
         
         for algo, words in keywords.items():
-            self.df[f'is_{algo}'] = self.df[text_col].fillna('').str.lower().apply(
+            self.df[f'is_{algo}'] = self.df['combined_text'].str.lower().apply(
                 lambda x: any(w in x for w in words)
             )
     

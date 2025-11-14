@@ -33,13 +33,41 @@ st.header("2: Interview Question")
 filtered_questions = st.session_state.get("filtered_questions", [])
 if not filtered_questions:
     st.warning("Select appropriate criteria.")
+    st.stop()
 
 if st.session_state.get("current_question") is None:
     st.session_state.current_question = random.choice(filtered_questions)
 
-st.markdown("#### Question:")
-st.write(st.session_state.current_question["question"])
+# Display problem metadata
+current_q = st.session_state.current_question
 
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown(f"**Difficulty:** {current_q.get('difficulty', 'N/A').title()}")
+with col2:
+    if current_q.get('acceptance_rate'):
+        st.markdown(f"**Acceptance Rate:** {current_q.get('acceptance_rate')}")
+with col3:
+    if current_q.get('url'):
+        st.markdown(f"[🔗 View on LeetCode]({current_q['url']})")
+
+st.divider()
+
+# Display question
+st.markdown("### Question:")
+st.markdown(f"**{current_q.get('title', '')}**")
+st.write(current_q.get("question", ""))
+
+# Display additional metadata
+if current_q.get('companies'):
+    with st.expander("💼 Companies"):
+        st.write(current_q['companies'])
+
+if current_q.get('related_topics'):
+    with st.expander("📚 Related Topics"):
+        st.write(current_q['related_topics'])
+
+st.divider()
 
 ## ace editor - code IDE session states
 def update_session_state():
