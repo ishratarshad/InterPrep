@@ -1,7 +1,28 @@
+# Core Streamlit
 streamlit
 streamlit-navigation-bar
+streamlit_ace
+
+# Data Processing
 pandas
 numpy
+
+# Visualization
 altair
 matplotlib
-streamlit_ace
+
+# NLP & ML (for future feedback engine)
+scikit-learn
+
+# Optional: For enhanced text processing
+nltk
+
+# Optional: For audio processing (Whisper integration)
+openai-whisper
+# OR
+# google-cloud-speech
+
+# Development
+pytest
+black
+flake8
