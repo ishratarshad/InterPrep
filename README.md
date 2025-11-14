@@ -21,9 +21,9 @@ Many students practice LeetCode problems but struggle to explain their thought p
 ## Tech Stack
 - Languages: Python  
 - ML/NLP: Hugging Face Transformers, scikit-learn, Pandas, NumPy  
-- Speech Recognition: Whisper API, Google Speech-to-Text  
+- Speech Recognition: Whisper AI
 - Backend: FastAPI or Flask  
-- Frontend: Streamlit or React  
+- Frontend: Streamlit  
 - Database: PostgreSQL or SQLite  
 
 ---
@@ -56,16 +56,6 @@ Many students practice LeetCode problems but struggle to explain their thought p
 - NLP Classifier – problem categorization and explanation analysis  
 - Feedback Engine – rubric design and scoring logic  
 - Frontend & Dashboard – visualization, progress tracking, and UI  
-
----
-
-## Timeline (6 Weeks)
-- Week 1: Scope definition, literature review, UX sketches  
-- Week 2: Dataset collection and speech-to-text pipeline  
-- Week 3: Baseline classifier and feedback rules  
-- Week 4: Lesson plan generator and dashboard  
-- Week 5: Model tuning and system integration  
-- Week 6: Testing, polish, final report, and demo  
 
 ---
 
