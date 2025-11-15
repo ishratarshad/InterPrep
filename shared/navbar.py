@@ -12,15 +12,17 @@ def apply_navbar_styles():
             padding: 10px 24px;
             border-radius: 8px;
             font-weight: 600;
-            font-family: 'sans-serif';
+            font-family: 'Chakra Petch', sans-serif !important;
             cursor: pointer;
             transition: background-color 0.25s ease, color 0.25s ease;
             width: 100%;
             box-shadow: none;
+            text-transform: uppercase !important;
         }}
         div.stButton > button:hover {{
             background-color: {globals.buttonHoverColor};
-            color: white;
+            color: {globals.backgroundColor};
+            font-weight: bold;
             border-color: {globals.buttonHoverColor};
         }}
         div.stButton > button:focus {{

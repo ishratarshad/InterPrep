@@ -3,6 +3,7 @@ import shared.navbar as navbar_module
 import globals
 
 st.set_page_config(page_title="InterPrep", layout="wide")
+globals.load_global_styles("globals.css")
 
 pages = {
     "About": "about",
@@ -15,15 +16,13 @@ navbar_module.navbar(pages, st.session_state.page)
 
 
 ## --
-st.title("🌟InterPrep🌟")
+st.title("InterPrep")
+st.subheader("Track and refine your technical interview practice.")
+st.write("")
 
 col1, col2 = st.columns([3, 4])
 
 with col1: 
-    st.subheader("""
-    Track and refine your technical interview practice.
-    """)
-
     st.write("""
     It's designed for simplicity and utility, helping job seekers practice verbally responding 
     to common behavioral (or technical) interview questions. It will **record**, **review**, and 

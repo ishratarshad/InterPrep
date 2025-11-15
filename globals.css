@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Offside&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch&display=swap');
+
+.css-1d391kg, .css-18e3th9, header[data-testid="stAppHeader"], .block-container {
+    padding-top: 1.2rem !important;
+    margin-top: 1.2rem !important;
+}
+
+body, p, h4, h5, h6, ul, li {
+    font-family: 'Ubuntu Sans', monospace !important;
+}
+
+/* div.stButton > button {
+    font-family: 'Chakra Petch', sans-serif !important;
+} */
+
+h1#inter-prep {
+    font-family: 'Nova Mono', monospace !important;
+}
+
+h2, h3 {
+    font-family: 'Offside', monospace !important;
+}

@@ -1,10 +1,17 @@
+import streamlit as st
+
+def load_global_styles(css_file: str = "globals.css"):
+    with open(css_file, "r") as f:
+        css = f.read()
+        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
 primaryColor = "#2E7D32"
 backgroundColor = "#FBFBF9"
 textColor = "#2E2E2E"
 borderColor = "#F4C2C2"
 linkColor = "#388E3C"
-buttonBgColor = "#D9EAD3"
-buttonHoverColor = "#5AC639"
+buttonBgColor = "#A1E7A7"
+buttonHoverColor = "#3ECC4D"
 buttonBorderColor = "#72D87B"
 
 ACE_LANG_OPTIONS = {

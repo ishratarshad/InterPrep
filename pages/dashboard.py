@@ -4,8 +4,10 @@ import numpy as np
 import altair as alt
 import matplotlib.pyplot as plt
 import shared.navbar as navbar_module
+import globals
 
 st.set_page_config(page_title="Dashboard", layout="wide")
+globals.load_global_styles("globals.css")
 
 pages = {
     "About": "about",
