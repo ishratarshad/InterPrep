@@ -1,8 +1,10 @@
 import streamlit as st
 import random
 import shared.navbar as navbar_module
+import globals
 
 st.set_page_config(page_title="Select Criteria", layout="wide")
+globals.load_global_styles("globals.css")
 
 pages = {
     "About": "about",
@@ -42,7 +44,7 @@ spc1, col, spc2 = st.columns([1, 1, 1])
 with col:
     if st.button("Start Interview", width='stretch'):
         if not difficulty or not qtype:
-            st.error("Select both difficulty and question type.")
+            st.error("Select difficulty & question type first.")
         else:
             filtered = filter_questions(QUESTIONS, difficulty, qtype)
             if filtered:
@@ -54,4 +56,3 @@ with col:
                 st.switch_page("pages/interview.py")
             else:
                 st.error("No questions match selection.")
-        st.rerun()

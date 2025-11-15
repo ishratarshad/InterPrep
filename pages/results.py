@@ -4,6 +4,7 @@ import globals
 import os
 
 st.set_page_config(page_title="Results", layout="wide")
+globals.load_global_styles("globals.css")
 
 pages = {
     "About": "about",
