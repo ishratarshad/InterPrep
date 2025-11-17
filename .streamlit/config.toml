@@ -16,9 +16,6 @@ secondaryBackgroundColor = "#DCE7E4"
 # text color -- generic, readable
 textColor = "#2E2E2E"
 
-# font style
-font = "sans serif"
-
 # border color --for inputs, cards
 borderColor = "#F4C2C2"
 
