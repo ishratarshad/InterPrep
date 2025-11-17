@@ -1,8 +1,18 @@
 import streamlit as st
 import random
 import shared.navbar as navbar_module
+from backend.leetcode_manager import LeetCodeManager
 
-st.set_page_config(page_title="Select Criteria", layout="wide")
+st.set_page_config(page_title="Select Criteria", layout="wide", initial_sidebar_state="collapsed")
+
+hide_sidebar = """
+    <style>
+    button[title="Toggle sidebar"] {display: none;}
+    [data-testid="stSidebar"] {display: none;}
+    [data-testid="stSidebarNav"] {display: none;}
+    </style>
+"""
+st.markdown(hide_sidebar, unsafe_allow_html=True)
 
 pages = {
     "About": "about",
@@ -13,24 +23,22 @@ pages = {
 navbar_module.apply_navbar_styles()
 navbar_module.navbar(pages, st.session_state.page)
 
+# Load problem manager
+@st.cache_resource
+def load_manager():
+    return LeetCodeManager("backend/leetcode_dataset - lc.csv")
 
-## --
-# TODO: replace w/ question-bank sourced from dataset/file/API/database/etc.
-QUESTIONS = [
-    {"id": 1, "question": "Implement binary search.", "difficulty": "easy", "type": "algorithm"},
-    {"id": 2, "question": "Explain dynamic programming.", "difficulty": "medium", "type": "concept"},
-    {"id": 3, "question": "Design a URL shortening service.", "difficulty": "hard", "type": "system design"},
-]
-
-# TODO: implement random in question selection
-def filter_questions(questions, difficulty, qtype):
-    return [q for q in questions if q['difficulty'] in difficulty and q['type'] in qtype]
+manager = load_manager()
 
 st.header("1: Select Criteria")
 
-# TODO: improve criteria for filtering (eg. leetcode)
-difficulty = st.multiselect("Difficulty", ["easy", "medium", "hard"], key="difficulty")
-qtype = st.multiselect("Question Type", ["algorithm", "concept", "system design"], key="qtype")
+# Filters
+difficulty = st.multiselect("Difficulty", ["Easy", "Medium", "Hard"], key="difficulty")
+algorithm_types = st.multiselect(
+    "Algorithm Type",
+    ["Array", "String", "Tree", "Graph", "Dynamic Programming", "Greedy", "Backtracking"],
+    key="algorithm_types"
+)
 
 st.write("")
 st.write("")
@@ -39,12 +47,19 @@ st.write("")
 st.write("")
 st.write("")
 spc1, col, spc2 = st.columns([1, 1, 1])
+
 with col:
     if st.button("Start Interview", width='stretch'):
-        if not difficulty or not qtype:
-            st.error("Select both difficulty and question type.")
+        if not difficulty and not algorithm_types:
+            st.error("Select at least one filter.")
         else:
-            filtered = filter_questions(QUESTIONS, difficulty, qtype)
+            # Convert to backend format
+            diff_fmt = [d.lower() for d in difficulty] if difficulty else None
+            algo_fmt = [a.lower().replace(' ', '_') for a in algorithm_types] if algorithm_types else None
+            
+            # Get problems
+            filtered = manager.get_problems_by_criteria(difficulty=diff_fmt, algorithm_types=algo_fmt)
+            
             if filtered:
                 st.session_state.filtered_questions = filtered
                 st.session_state.current_question = None
@@ -53,5 +68,4 @@ with col:
                 st.session_state.page = 'interview'
                 st.switch_page("pages/interview.py")
             else:
-                st.error("No questions match selection.")
-        st.rerun()
+                st.error("No problems match selection.")
