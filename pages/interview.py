@@ -130,8 +130,6 @@ if st.button("Save Code"):
 with col2:
     # follow-up question / get transcript of answer
     status = st.status(selected_question, expanded=False)
-    with status:
-        st.success(selected_question)
     # st.info("Audio recording widget placeholder")
     # TODO: Whisper AI -- Role A
     audio = st.audio_input("Record")
