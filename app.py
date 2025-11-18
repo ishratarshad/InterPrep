@@ -20,9 +20,9 @@ navbar_module.apply_navbar_styles()
 navbar_module.navbar(pages, st.session_state.page)
 
 
-col1, col2, col3 = st.columns([1,2,1])
+col1, col2, col3 = st.columns([2,1.2,2])
 with col2:
-    st.title("🌟InterPrep🌟")
+    st.title("InterPrep")
 
 st.write("")
 st.markdown("<h3 style='text-align: center; width: 100%;'>Track and refine your technical interview practice.</h3>", unsafe_allow_html=True)
