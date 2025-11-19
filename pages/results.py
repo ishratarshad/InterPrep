@@ -17,7 +17,7 @@ navbar_module.navbar(pages, st.session_state.page)
 
 
 ## --
-st.header("3: Evaluation & Feedback")
+st.header("Evaluation & Feedback")
 
 col1, col2 = st.columns([1.5, 1])
 with col1:

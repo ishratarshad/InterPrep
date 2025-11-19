@@ -23,10 +23,12 @@ def load_manager():
 
 manager = load_manager()
 
-st.header("1: Select Criteria")
+st.header("Select Criteria")
+st.write("")
 
 # Filters
 difficulty = st.multiselect("Difficulty", ["Easy", "Medium", "Hard"], key="difficulty")
+st.divider()
 algorithm_types = st.multiselect(
     "Algorithm Type",
     ["Array", "String", "Tree", "Graph", "Dynamic Programming", "Greedy", "Backtracking"],

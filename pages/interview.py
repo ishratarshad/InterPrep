@@ -20,7 +20,7 @@ navbar_module.navbar(pages, st.session_state.page)
 
 
 ## --
-st.header("2: Interview Question")
+st.header("Interview Question")
 
 filtered_questions = st.session_state.get("filtered_questions", [])
 if not filtered_questions:
@@ -31,6 +31,26 @@ if st.session_state.get("current_question") is None:
 
 st.markdown("#### Question:")
 st.write(st.session_state.current_question["question"])
+
+# questions for the audio transcription
+# TODO: placeholder; may need to implement separately later
+follow_up_questions = [
+    "Explain your approach to the problem and your solution.",
+    "Explain the time and space complexity of your code. Could it be optimized?",
+    "Walk me through your code line by line.",
+    "Why did you choose this particular data structure or algorithm?",
+    "How would your solution handle edge cases or very large inputs?",
+    "What trade-offs did you make in your approach to the problem?",
+    "If you had more time, how would you improve your solution?",
+    "How would you test this function or algorithm?",
+    "What are potential bugs or failure points in your implementation?",
+    "How does your code compare to a brute-force solution?",
+    "Could your code be made more readable or maintainable? How?",
+    "What assumptions does your solution make about the input or environment?",
+    "Can you provide an example input and explain how your code processes it step by step?"
+]
+
+selected_question = random.choice(follow_up_questions)
 
 
 ## ace editor - code IDE session states
@@ -76,6 +96,7 @@ if not os.path.exists(code_folder):
 file_path = os.path.join(code_folder, save_destination)
 
 
+# success msg: on code save
 def success_message():
     success_placeholder = st.empty()
     success_placeholder.success("Code saved!")
@@ -85,7 +106,7 @@ def success_message():
 
 
 ## -- 
-col1, col2 = st.columns([1.5, 0.5])
+col1, col2 = st.columns([1.45, 0.65])
 
 # EMBEDDED CODING IDE
 with col1:
@@ -105,19 +126,24 @@ if st.button("Save Code"):
 
 
 # AUDIO - show TRANSCRIPT in Results
+## audio/verbal explanation of code is not (yet?) stipulated to submit & view results
 with col2:
+    # follow-up question / get transcript of answer
+    status = st.status(selected_question, expanded=False)
     # st.info("Audio recording widget placeholder")
-    # TODO: Whisper AI --
+    # TODO: Whisper AI -- Role A
     audio = st.audio_input("Record")
     if audio:
         st.audio(audio)  # playback
         os.makedirs("audio", exist_ok=True)
-        # save option
+        # save option - random ID
         num = random.randint(1000000, 9999999)
         filename = f"audio/user_recorded_{num}.wav"
         with open(filename, "wb") as f:
             f.write(audio.getbuffer())
-        st.success(f"Saved! {filename}")
+        # st.success(f"Saved! {filename}")
+        # status update
+        status.update(label="Audio saved successfully!", state="complete")
 
 
 # redirect: new question, results
