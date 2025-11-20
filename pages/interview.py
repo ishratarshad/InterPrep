@@ -136,13 +136,11 @@ with col1:
 
 # Audio recording & transcription
 with col2:
-    status = st.status(selected_question, expanded=False)
+    status = st.status(f":orange[{selected_question}]", expanded=False)
     audio = st.audio_input("Record your explanation")
     if audio:
-        st.audio(audio)  # Playback
         os.makedirs("audio", exist_ok=True)
-        num = random.randint(1000000, 9999999)
-        filename = f"audio/user_recorded_{num}.wav"
+        filename = f"audio/user_recorded.wav"
         with open(filename, "wb") as f:
             f.write(audio.getbuffer())
         status.update(label="Audio saved!", state="complete")
@@ -152,7 +150,7 @@ with col2:
     def load_transcription():
         return TranscriptionService()
 
-    if st.button("🎯 Transcribe Audio", type="primary", use_container_width=True):
+    if st.button("Transcribe Audio", type="primary", width='stretch'):
         with st.spinner("Transcribing..."):
             try:
                 service = load_transcription()
@@ -172,8 +170,8 @@ with col2:
 # Navigation buttons
 st.write("\n\n\n")
 col1, spc, col2 = st.columns([1, 1, 1])
-practice_new_clicked = col1.button("Practice New", key="practice_new_btn", use_container_width=True)
-results_clicked = col2.button("Submit & View Results", key="results_btn", use_container_width=True)
+practice_new_clicked = col1.button("Practice New", key="practice_new_btn", width='stretch')
+results_clicked = col2.button("Submit & View Results", key="results_btn", width='stretch')
 
 if practice_new_clicked:
     st.switch_page("pages/select_criteria.py")
