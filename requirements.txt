@@ -22,6 +22,7 @@ nltk
 
 # Optional: For audio processing (Whisper integration)
 openai-whisper
+faster-whisper
 # OR
 # google-cloud-speech
 
