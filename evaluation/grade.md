@@ -1,4 +1,4 @@
-| Score  | Category             | Details                                              |
+| Score  | Performance          | Details                                              |
 |--------|----------------------|------------------------------------------------------|
 | 90-100 | Excellent            | Outstanding performance, fully meets expectations    |
 | 75-89  | Good                 | Slight improvements possible                         |
