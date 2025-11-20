@@ -148,7 +148,9 @@ with col2:
     # Load transcription service (cached)
     @st.cache_resource
     def load_transcription():
-        return TranscriptionService()
+        # return TranscriptionService()
+        return TranscriptionService(model_size="small")
+
 
     if st.button("Transcribe Audio", type="primary", width='stretch'):
         with st.spinner("Transcribing..."):
