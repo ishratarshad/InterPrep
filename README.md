@@ -28,6 +28,36 @@ Many students practice LeetCode problems but struggle to explain their thought p
 
 ---
 
+## Installation & Setup
+
+#### 1. Clone the repository
+```
+git clone https://github.com/ishratarshad/InterPrep.git
+```
+
+#### 2. Setup & activate your virtual environment, eg. `venv`. 
+```
+python -m venv venv
+venv\Scripts\activate
+```
+
+#### 3. Install packages & dependencies in `requirements.txt`
+```
+pip install -r requirements.txt
+```
+
+#### 4. Create/Edit the `.env` file to store store environment variables and API keys
+```
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+#### 5. Run the app from the project root
+```
+streamlit run app.py
+```
+
+---
+
 ## Datasets
 
 ### Algorithm & Problem Data
