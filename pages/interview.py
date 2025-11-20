@@ -77,9 +77,9 @@ def update_session_state():
     if lang_name not in globals.ACE_LANG_OPTIONS:
         lang_name = list(globals.ACE_LANG_OPTIONS.keys())[0]
 
+    st.session_state["initial_code"] = globals.ACE_LANG_OPTIONS[lang_name]["placeholder"]
     st.session_state["selected_lang"] = lang_name
     st.session_state["selected_lang_extension"] = globals.ACE_LANG_OPTIONS[lang_name]["extension"]
-    st.session_state["initial_code"] = globals.ACE_LANG_OPTIONS[lang_name]["placeholder"]
 
 # Initialize session state defaults
 if "language_select" not in st.session_state or st.session_state["language_select"] not in globals.ACE_LANG_OPTIONS:
@@ -91,11 +91,14 @@ if "selected_lang_extension" not in st.session_state:
 if "initial_code" not in st.session_state:
     st.session_state["initial_code"] = globals.ACE_LANG_OPTIONS[st.session_state["language_select"]]["placeholder"]
 
+lang_keys = list(globals.ACE_LANG_OPTIONS.keys())
+selected_index = lang_keys.index(st.session_state["language_select"])
+
 # Ace editor language select
 lang_display = st.selectbox(
     "Select Programming Language",
-    options=list(globals.ACE_LANG_OPTIONS.keys()),
-    index=list(globals.ACE_LANG_OPTIONS.keys()).index(st.session_state["language_select"]),
+    options=lang_keys,
+    index=selected_index,
     key="language_select",
     on_change=update_session_state
 )
@@ -127,7 +130,7 @@ with col1:
         language=selected_lang_ext,
         auto_update=True,
         theme='dracula',
-        key='ace_editor',
+        key=f'ace_editor_{st.session_state["language_select"]}',
     )
     if st.button("Save Code"):
         with open(file_path, "w") as f:
