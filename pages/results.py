@@ -18,9 +18,11 @@ navbar_module.navbar(pages, st.session_state.page)
 
 ## --
 st.header("Evaluation & Feedback")
+st.write("")
 
-col1, col2 = st.columns([1.5, 1])
+col1, col2 = st.columns([1.25, 1])
 with col1:
+    st.markdown("#### Code Submitted")
     selected_lang = st.session_state.get("selected_lang")
     if selected_lang not in globals.ACE_LANG_OPTIONS:
         selected_lang = list(globals.ACE_LANG_OPTIONS.keys())[0]
@@ -40,11 +42,45 @@ with col1:
 # transcript = st.text_area("Transcript", st.session_state.get("transcript", ""), height=150)
 # st.session_state.transcript = transcript
 with col2:
-    st.info("Whisper - Transcript placeholder")
+    st.markdown("#### Transcribed Audio")
+    transcript_text = st.session_state.get("transcript", "")
+    st.write(st.session_state.transcript)
+
 
 st.divider()
-st.subheader("Feedback")
-st.write(st.session_state.get("feedback", "Feedback here."))
+st.subheader("Scoring & Evaluation")
+col1, col2 = st.columns([1, 1])
+
+with col1:
+    with open("evaluation/1_problem_identification.md", "r", encoding="utf-8") as f:
+        md_content = f.read()
+    with st.expander("#1 Problem Identification", expanded=True):
+        st.markdown(md_content)
+
+    with open("evaluation/2_complexity_analysis.md", "r", encoding="utf-8") as f:
+        md_content = f.read()
+    with st.expander("#2 Complexity Analysis", expanded=True):
+        st.markdown(md_content)
+
+    with open("evaluation/3_clarity_explanation.md", "r", encoding="utf-8") as f:
+        md_content = f.read()
+    with st.expander("#3 Clarity of Explanation", expanded=True):
+        st.markdown(md_content)
+
+    with open("evaluation/4_edge_case_error_handling.md", "r", encoding="utf-8") as f:
+        md_content = f.read()
+    with st.expander("#4 Edge Cases & Error Handling", expanded=True):
+        st.markdown(md_content)
+
+with col2:
+    st.info("Code Evaluation")
+    st.info("Transcript Evaluation")
+
+
+st.divider()
+st.subheader("Personalized Feedback")
+st.info("LLM Feedback - placeholder")
+# st.write(st.session_state.get("feedback", "Feedback here."))
 
 
 # redirect: new question, dashboard

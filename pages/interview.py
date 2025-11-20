@@ -145,14 +145,12 @@ with col2:
             f.write(audio.getbuffer())
         status.update(label="Audio saved!", state="complete")
 
-    # Load transcription service (cached)
-    @st.cache_resource
-    def load_transcription():
-        # return TranscriptionService()
-        return TranscriptionService(model_size="small")
+        # Load transcription service (cached)
+        @st.cache_resource
+        def load_transcription():
+            return TranscriptionService(model_size="small")
 
-
-    if st.button("Transcribe Audio", type="primary", width='stretch'):
+        # automatically transcribe audio
         with st.spinner("Transcribing..."):
             try:
                 service = load_transcription()
@@ -160,8 +158,13 @@ with col2:
                 if transcript:
                     st.session_state.transcript = transcript
                     st.session_state.audio_file = filename
+
                     st.success("✅ Transcribed!")
-                    with st.expander("📝 Transcript Preview", expanded=True):
+                    transcript_path = "transcript/transcript.txt"
+                    with open(transcript_path, "w", encoding="utf-8") as f:
+                        f.write(transcript)
+
+                    with st.expander("Transcript Preview", expanded=True):
                         st.write(transcript)
                         st.caption(f"{len(transcript.split())} words")
                 else:
@@ -170,7 +173,9 @@ with col2:
                 st.error(f"Error: {e}")
 
 # Navigation buttons
-st.write("\n\n\n")
+st.write("")
+st.divider()
+
 col1, spc, col2 = st.columns([1, 1, 1])
 practice_new_clicked = col1.button("Practice New", key="practice_new_btn", width='stretch')
 results_clicked = col2.button("Submit & View Results", key="results_btn", width='stretch')
@@ -179,6 +184,7 @@ if practice_new_clicked:
     st.switch_page("pages/select_criteria.py")
 
 if results_clicked:
+    # force-ensure code saves
     with open(file_path, "w") as f:
         f.write(code)
     st.session_state.page = 'results'
