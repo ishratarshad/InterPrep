@@ -13,6 +13,9 @@ matplotlib
 
 # NLP & ML (for future feedback engine)
 scikit-learn
+transformers
+torch
+torchaudio
 
 # Optional: For enhanced text processing
 nltk
