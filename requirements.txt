@@ -16,7 +16,6 @@ scikit-learn
 transformers
 torch
 torchaudio
-transformers
 
 # Optional: For enhanced text processing
 nltk
