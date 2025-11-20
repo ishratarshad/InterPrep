@@ -52,7 +52,7 @@ with col2:
                         </div>
                         ''', unsafe_allow_html=True)
 
-    image_path = "interprep-about.png"
+    image_path = "images/interprep-about.png"
     render_img_html(image_path, caption="Mock interviews can lead to increased job offer acceptance")
 
 st.write("")

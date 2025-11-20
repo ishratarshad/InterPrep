@@ -39,5 +39,5 @@ def render_img_html(image_path, caption=None):
                     </div>
                     ''', unsafe_allow_html=True)
 
-image_path = "interprep-app.png"
+image_path = "images/interprep-app.png"
 render_img_html(image_path, caption="")
