@@ -5,6 +5,8 @@ import random
 import os
 import time
 import globals
+from backend.transcription import TranscriptionService
+
 
 st.set_page_config(page_title="Practice", layout="wide")
 globals.load_global_styles("globals.css")
