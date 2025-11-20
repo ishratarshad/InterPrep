@@ -6,6 +6,7 @@ import globals
 
 st.set_page_config(page_title="Select Criteria", layout="wide")
 globals.load_global_styles("globals.css")
+st.session_state.page = 'select_criteria'
 
 pages = {
     "About": "about",

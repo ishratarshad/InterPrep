@@ -91,7 +91,7 @@ st.subheader("Evaluation Rubric")
 with open("evaluation/rubric.md", "r", encoding="utf-8") as f:
     md_content = f.read()
 
-scroll_height = 400
+scroll_height = 700
 with st.container():
     st.markdown(
         f'<div style="height: {scroll_height}px; overflow-y: auto; border: 2px solid {globals.buttonBorderColor}; padding: 10px; border-radius: 15px;">{md_content}</div>', 
