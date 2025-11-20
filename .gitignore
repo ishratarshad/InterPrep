@@ -4,3 +4,4 @@ venv/
 .streamlit/secrets.toml
 code/
 audio/
+transcript/

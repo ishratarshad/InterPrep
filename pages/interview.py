@@ -160,7 +160,12 @@ with col2:
                 if transcript:
                     st.session_state.transcript = transcript
                     st.session_state.audio_file = filename
+
                     st.success("✅ Transcribed!")
+                    transcript_path = "transcript/transcript.txt"
+                    with open(transcript_path, "w", encoding="utf-8") as f:
+                        f.write(transcript)
+
                     with st.expander("📝 Transcript Preview", expanded=True):
                         st.write(transcript)
                         st.caption(f"{len(transcript.split())} words")
