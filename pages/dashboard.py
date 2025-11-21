@@ -9,6 +9,9 @@ import globals
 st.set_page_config(page_title="Dashboard", layout="wide")
 globals.load_global_styles("globals.css")
 
+if "page" not in st.session_state:
+    st.session_state.page = "dashboard"
+
 pages = {
     "About": "about",
     "Practice": "select_criteria",

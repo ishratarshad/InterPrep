@@ -5,12 +5,14 @@ import random
 import os
 import time
 import globals
-from backend.transcription import TranscriptionService  # <-- backend import
+from backend.transcription import TranscriptionService
 
 # Page config & styles
 st.set_page_config(page_title="Practice", layout="wide")
 globals.load_global_styles("globals.css")
-st.session_state.page = 'interview'
+
+if "page" not in st.session_state:
+    st.session_state.page = "interview"
 
 # Navigation setup
 pages = {
@@ -35,11 +37,11 @@ if filtered_questions:
     st.markdown("#### Question:")
     st.write(st.session_state.current_question["question"])
 
-# Follow-up questions for audio transcription
+# Follow-up questions
 follow_up_questions = [
+    "Walk me through your code line by line and explain the logic.",
     "Explain your approach to the problem and your solution.",
     "What is the time and space complexity of your code? Could it be optimized? Explain.",
-    "Walk me through your code line by line and explain the logic.",
     "Why did you choose this particular data structure or algorithm?",
     "How does your solution handle edge cases or very large inputs?",
     "How does your solution scale with increasing data size?",
@@ -72,7 +74,10 @@ follow_up_questions = [
 
 selected_question = random.choice(follow_up_questions)
 
-# -- Ace editor session state management --
+# ---------------------------------
+# ACE Editor Session Management
+# ---------------------------------
+
 def update_session_state():
     lang_name = st.session_state["language_select"]
     if lang_name not in globals.ACE_LANG_OPTIONS:
@@ -82,20 +87,22 @@ def update_session_state():
     st.session_state["selected_lang"] = lang_name
     st.session_state["selected_lang_extension"] = globals.ACE_LANG_OPTIONS[lang_name]["extension"]
 
-# Initialize session state defaults
-if "language_select" not in st.session_state or st.session_state["language_select"] not in globals.ACE_LANG_OPTIONS:
+if "language_select" not in st.session_state:
     st.session_state["language_select"] = list(globals.ACE_LANG_OPTIONS.keys())[0]
-if "selected_lang" not in st.session_state or st.session_state["selected_lang"] not in globals.ACE_LANG_OPTIONS:
+
+if "selected_lang" not in st.session_state:
     st.session_state["selected_lang"] = st.session_state["language_select"]
+
 if "selected_lang_extension" not in st.session_state:
     st.session_state["selected_lang_extension"] = globals.ACE_LANG_OPTIONS[st.session_state["language_select"]]["extension"]
+
 if "initial_code" not in st.session_state:
     st.session_state["initial_code"] = globals.ACE_LANG_OPTIONS[st.session_state["language_select"]]["placeholder"]
 
 lang_keys = list(globals.ACE_LANG_OPTIONS.keys())
 selected_index = lang_keys.index(st.session_state["language_select"])
 
-# Ace editor language select
+# Select language
 lang_display = st.selectbox(
     "Select Programming Language",
     options=lang_keys,
@@ -107,11 +114,13 @@ lang_display = st.selectbox(
 selected_lang_ext = st.session_state["selected_lang_extension"]
 initial_code = st.session_state["initial_code"]
 
-# File paths for code saving
+# File paths
 code_folder = 'code'
 save_destination = f"user_code.{selected_lang_ext}"
+
 if not os.path.exists(code_folder):
     os.makedirs(code_folder)
+
 file_path = os.path.join(code_folder, save_destination)
 
 # Success message
@@ -121,10 +130,16 @@ def success_message(msg="Code saved!"):
     time.sleep(0.5)
     placeholder.empty()
 
-# -- Layout: code IDE + audio transcription --
+
+# ---------------------------------
+# Layout: Code Editor + Audio
+# ---------------------------------
+
 col1, col2 = st.columns([1.45, 0.65])
 
-# Coding IDE
+# ==========================
+# CODE EDITOR
+# ==========================
 with col1:
     code = st_ace(
         value=initial_code,
@@ -133,63 +148,76 @@ with col1:
         theme='dracula',
         key=f'ace_editor_{st.session_state["language_select"]}',
     )
+
     if st.button("Save Code"):
         with open(file_path, "w") as f:
             f.write(code)
         success_message()
 
-# Audio recording & transcription
+
+# ==========================
+# AUDIO RECORDING + WHISPER
+# ==========================
 with col2:
     status = st.status(f":orange[{selected_question}]", expanded=False)
+
     audio = st.audio_input("Record your explanation")
+
     if audio:
         os.makedirs("audio", exist_ok=True)
-        filename = f"audio/user_recorded.wav"
+        filename = "audio/user_recorded.wav"
+
         with open(filename, "wb") as f:
             f.write(audio.getbuffer())
+
         status.update(label="Audio saved!", state="complete")
 
-        # Load transcription service (cached)
+        # Cache whisper model
         @st.cache_resource
         def load_transcription():
             return TranscriptionService(model_size="small")
 
-        # automatically transcribe audio
         with st.spinner("Transcribing..."):
             try:
                 service = load_transcription()
                 transcript = service.transcribe(filename)
+
                 if transcript:
                     st.session_state.transcript = transcript
                     st.session_state.audio_file = filename
 
                     st.success("✅ Transcribed!")
-                    transcript_path = "transcript/transcript.txt"
-                    with open(transcript_path, "w", encoding="utf-8") as f:
+
+                    # Save transcript
+                    os.makedirs("transcript", exist_ok=True)
+                    with open("transcript/transcript.txt", "w", encoding="utf-8") as f:
                         f.write(transcript)
 
+                    # Preview
                     with st.expander("Transcript Preview", expanded=True):
                         st.write(transcript)
                         st.caption(f"{len(transcript.split())} words")
+
                 else:
-                    st.error("Transcription failed")
+                    st.error("Transcription returned empty text.")
+
             except Exception as e:
                 st.error(f"Error: {e}")
 
-# Navigation buttons
-st.write("")
+
+# ---------------------------------
+# Navigation
+# ---------------------------------
+
 st.divider()
-
 col1, spc, col2 = st.columns([1, 1, 1])
-practice_new_clicked = col1.button("Practice New", key="practice_new_btn", width='stretch')
-results_clicked = col2.button("Submit & View Results", key="results_btn", width='stretch')
 
-if practice_new_clicked:
+if col1.button("Practice New", key="practice_new_btn", use_container_width=True):
     st.switch_page("pages/select_criteria.py")
 
-if results_clicked:
-    # force-ensure code saves
+if col2.button("Submit & View Results", key="results_btn", use_container_width=True):
     with open(file_path, "w") as f:
         f.write(code)
+
     st.session_state.page = 'results'
     st.switch_page("pages/results.py")

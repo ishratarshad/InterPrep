@@ -20,11 +20,14 @@ torchaudio
 # Optional: For enhanced text processing
 nltk
 
-# Optional: For audio processing (Whisper integration)
-openai-whisper
+# Audio Processing (Whisper integration)
 faster-whisper
-# OR
-# google-cloud-speech
+
+# Google Gemini LLM
+google-generativeai
+
+# Backend
+fastapi
 
 # Development
 pytest

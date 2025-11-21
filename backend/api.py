@@ -62,41 +62,41 @@ and algorithms interview problem.
 You must:
 
 1. Classify the main algorithm category from this fixed list:
-   - arrays
-   - hashmap
-   - two_pointers
-   - sliding_window
-   - binary_search
-   - linked_list
-   - tree
-   - graph
-   - heap
-   - dp
-   - backtracking
+    - arrays
+    - hashmap
+    - two_pointers
+    - sliding_window
+    - binary_search
+    - linked_list
+    - tree
+    - graph
+    - heap
+    - dp
+    - backtracking
 
 2. Score the explanation on a 1–3 scale for each dimension:
 
-   - problem_id:
-     1 = They do not clearly match the correct technique to the problem.
-     2 = They roughly identify the right idea but it's incomplete or slightly off.
-     3 = They clearly identify the right technique and explain why it fits.
+    - problem_id:
+        1 = They do not clearly match the correct technique to the problem.
+        2 = They roughly identify the right idea but it's incomplete or slightly off.
+        3 = They clearly identify the right technique and explain why it fits.
 
-   - complexity:
-     1 = No discussion of time or space complexity.
-     2 = Mentions complexity but is vague or partially incorrect.
-     3 = Clearly states time and space complexity (e.g., O(n), O(log n)) and is mostly correct.
+    - complexity:
+        1 = No discussion of time or space complexity.
+        2 = Mentions complexity but is vague or partially incorrect.
+        3 = Clearly states time and space complexity (e.g., O(n), O(log n)) and is mostly correct.
 
-   - clarity:
-     1 = Disorganized, missing key steps, or very hard to follow.
-     2 = Some structure but missing steps or edge cases; somewhat understandable.
-     3 = Clear, organized explanation with main steps and at least one edge case.
+    - clarity:
+        1 = Disorganized, missing key steps, or very hard to follow.
+        2 = Some structure but missing steps or edge cases; somewhat understandable.
+        3 = Clear, organized explanation with main steps and at least one edge case.
 
 3. Provide 2–3 short, specific comments that help them improve.
 
 4. Decide an overall_level:
-   - beginner
-   - intermediate
-   - advanced
+    - beginner
+    - intermediate
+    - advanced
 """
 
 # --------- Healthcheck ---------
@@ -146,19 +146,19 @@ Now:
 Respond with ONLY valid JSON in exactly this format:
 
 {{
-  "predicted_category": "one_of_the_categories",
-  "reasoning": "short explanation",
-  "confidence": 0.0,
-  "score": {{
-    "problem_id": 1,
-    "complexity": 1,
-    "clarity": 1
-  }},
-  "comments": [
-    "comment 1",
-    "comment 2"
-  ],
-  "overall_level": "beginner"
+    "predicted_category": "one_of_the_categories",
+    "reasoning": "short explanation",
+    "confidence": 0.0,
+    "score": {{
+        "problem_id": 1,
+        "complexity": 1,
+        "clarity": 1
+    }},
+    "comments": [
+        "comment 1",
+        "comment 2"
+    ],
+    "overall_level": "beginner"
 }}
 """
 
