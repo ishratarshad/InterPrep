@@ -1,110 +1,185 @@
 # InterPrep: Voice-Interactive AI Interview Trainer
 
 ## Overview
-Many students practice LeetCode problems but struggle to explain their thought process clearly in technical interviews.  
-**InterPrep** is a voice-interactive system that helps bridge this gap by:  
-- Simulating interview practice with spoken explanations  
-- Providing structured feedback on clarity, correctness, and complexity  
-- Generating adaptive study plans tailored to user progress  
+Many students practice LeetCode problems but struggle to explain their thought process clearly in technical interviews. **InterPrep** bridges this gap by providing a voice-interactive platform that simulates real interview conditions, helping you practice both coding and verbal communication skills.
 
 ---
 
 ## Features
-- Voice-Interactive Practice – Explain solutions out loud, transcribed using Whisper or Google Speech-to-Text  
-- Problem Classification – Categorizes problems into algorithmic patterns such as arrays, graphs, dynamic programming, greedy, binary search, and backtracking  
-- Feedback Engine – Evaluates user explanations for completeness, edge-case handling, and complexity analysis  
-- Adaptive Lesson Plans – Personalized weekly checklists based on performance  
-- Progress Dashboard – Tracks learning outcomes and improvement trends  
+
+### Core Functionality
+- **Voice-Interactive Practice** – Record explanations of your solutions using Whisper AI for automatic transcription
+- **Multi-Language Code Editor** – Write solutions in Python, JavaScript, C++, Java, Go, PHP, Swift, or TypeScript
+- **Problem Filtering** – Select problems by difficulty (Easy, Medium, Hard) and algorithm type
+- **AI-Powered Feedback** – Get evaluated on problem identification, complexity analysis, and explanation clarity using Gemini AI
+- **Progress Tracking** – Monitor your performance over time through an interactive dashboard
+
+### Algorithm Categories
+- Arrays & HashMaps
+- Two Pointers & Sliding Window
+- Binary Search
+- Linked Lists
+- Trees & Graphs
+- Heaps & Priority Queues
+- Dynamic Programming
+- Backtracking
 
 ---
 
 ## Tech Stack
-- Languages: Python  
-- ML/NLP: Hugging Face Transformers, scikit-learn, Pandas, NumPy  
-- Speech Recognition: Whisper AI
-- Backend: FastAPI or Flask  
-- Frontend: Streamlit  
-- Database: PostgreSQL or SQLite  
+
+### Frontend
+- **Streamlit** – Web application framework
+- **Streamlit Ace** – In-browser code editor with syntax highlighting
+- **Altair & Matplotlib** – Data visualization for progress tracking
+
+### Backend & AI
+- **FastAPI** – RESTful API backend
+- **Whisper AI (faster-whisper)** – Automatic speech recognition for transcription
+- **Google Gemini API** – LLM-powered evaluation and feedback generation
+- **Pandas & NumPy** – Data processing and analysis
+
+### Machine Learning
+- **PyTorch** – Deep learning framework
+- **Transformers (Hugging Face)** – NLP model support
+- **scikit-learn** – ML utilities
 
 ---
 
 ## Installation & Setup
 
 #### 1. Clone the repository
-```
+```bash
 git clone https://github.com/ishratarshad/InterPrep.git
+cd InterPrep
 ```
 
-#### 2. Setup & activate your virtual environment, eg. `venv`. 
-```
+#### 2. Set up virtual environment
+```bash
 python -m venv venv
+# Windows
 venv\Scripts\activate
+# macOS/Linux
+source venv/bin/activate
 ```
 
-#### 3. Install packages & dependencies in `requirements.txt`
-```
+#### 3. Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-#### 4. Create/Edit the `.env` file to store store environment variables and API keys
-```
-GEMINI_API_KEY=your_gemini_api_key
+#### 4. Configure environment variables
+Create a `.env` file in the project root:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-#### 5. Run the app from the project root
-```
+#### 5. Run the application
+```bash
 streamlit run app.py
 ```
 
----
-
-## Datasets
-
-### Algorithm & Problem Data
-- LeetCode Problem Dataset (Kaggle) – problem statements and metadata  
-- LeetCode Solutions Dataset – canonical solutions and complexity notes  
-- Curated dataset of 120–200 problems across 10+ categories  
-
-### Speech / Interview Data
-- People’s Speech (MLCommons) – large-scale transcripts  
-- Common Voice (Mozilla) – multilingual and diverse speech  
-- MIT Interview Dataset – mock interview recordings with ratings  
-- Switchboard and Buckeye Corpora – conversational dialogue  
+The app will open in your browser at `http://localhost:8501`
 
 ---
 
-## Evaluation Metrics
-- Problem classification accuracy (macro F1 score)  
-- Speech-to-text transcription quality (word error rate)  
-- Feedback usefulness (rubric-based survey)  
-- Learning signal (measured improvement across repeated sessions)  
+## Project Structure
+
+```
+InterPrep/
+├── app.py                     # Main application entry point
+├── pages/
+│   ├── about.py               # Landing page with project info
+│   ├── select_criteria.py     # Problem filter selection
+│   ├── interview.py           # Code editor + audio recording
+│   ├── results.py             # Evaluation and feedback display
+│   └── dashboard.py           # Progress tracking and metrics
+├── backend/
+│   ├── api.py                 # FastAPI endpoints for AI analysis
+│   ├── transcription.py       # Whisper integration
+│   └── leetcode_manager.py    # Problem filtering logic
+├── evaluation/                # Rubric and grading documentation
+├── code/                      # stores user's code solution; generated upon run-through of code
+├── audio/                     # stores user's audio clip; generated upon run-through of code
+├── transcript/                # stores user's audio transcript; generated upon run-through of code
+├── shared/
+│   └── navbar.py              # Navigation component
+├── .env                       # stores environment variables
+├── globals.py                 # Shared styles and constants
+└── requirements.txt
+```
 
 ---
 
-## Team Roles
-- Automatic Speech Recognition & Backend – speech pipeline and API development  
-- NLP Classifier – problem categorization and explanation analysis  
-- Feedback Engine – rubric design and scoring logic  
-- Frontend & Dashboard – visualization, progress tracking, and UI  
+## Preview
+![InterPrep](images/readme-image.png)
+
+
+## How It Works
+
+### 1. Select Criteria (Practice)
+Choose your criteria for problem difficulty and algorithm types to get a curated question
+
+### 2. Practice Interview
+- Write your solution in the integrated code editor
+- Record your verbal explanation answering a follow-up question
+- Audio is automatically transcribed using Whisper AI
+
+### 3. Get Feedback
+Receive AI-generated evaluation on:
+- **Problem Identification (35 pts)** – Pattern recognition, understanding, approach selection
+- **Complexity Analysis (35 pts)** – Time/space complexity correctness
+- **Clarity of Explanation (30 pts)** – Structure, technical communication, completeness
+
+### 4. Track Progress (Dashboard)
+Monitor your improvement over time through the dashboard
 
 ---
 
-## Risks and Mitigations
-- ASR Noise – apply noise filters and allow transcript editing before scoring  
-- Sparse Labels – begin with rule-based templates, expand gradually if time permits  
-- Scope Creep – restrict MVP to ten problem categories and one-minute responses  
+## Evaluation Rubric
+
+The system evaluates explanations on a **100-point scale**:
+
+| Score Range | Level | Description |
+|------------|-------|-------------|
+| 90-100 | Excellent | Outstanding performance, fully meets expectations |
+| 75-89 | Good | Slight improvements possible |
+| 60-74 | Satisfactory | Acceptable with some gaps |
+| 40-59 | Needs Improvement | Significant issues to address |
+| < 40 | Poor | Fails to meet basic criteria |
+
+See [evaluation/rubric.md](evaluation/rubric.md) for detailed scoring criteria.
 
 ---
 
-## Stretch Goals
-- Retrieval of similar problems with vector embeddings  
-- Runtime-based complexity validation  
-- Multi-turn dialogues with adaptive hints  
+## Dataset
+
+**LeetCode Problem Dataset** from [Kaggle](https://www.kaggle.com/datasets/gzipchrist/leetcode-problem-dataset/data)
+- 120+ curated problems across 10+ categories
+- Includes problem statements, difficulty levels, and metadata
 
 ---
 
-## Expected Impact
-- Moves beyond coding practice into communication skill development  
-- Provides a structured and adaptive roadmap for technical interview preparation  
-- Improves both problem-solving performance and explanation clarity  
-- Helps students prepare more effectively and gain confidence in real interviews  
+## Future Enhancements
+
+- [ ] Code execution and runtime validation
+- [ ] Multi-turn dialogues with adaptive hints
+- [ ] Retrieval of similar problems using embeddings
+- [ ] Account and progress tracking
+- [ ] Social features (leaderboards, peer comparison)
+
+
+---
+### Expected Impact
+Receive AI-generated evaluation on:
+- Communication skill development
+- Provides a structured and adaptive roadmap for technical interview preparation
+- Improves both problem-solving performance and explanation clarity
+- Helps students prepare more effectively and gain confidence in real interviews
+
+
+## License
+
+This project is open source and available under the MIT License.
+
+---
