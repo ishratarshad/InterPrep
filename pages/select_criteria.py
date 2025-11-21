@@ -1,12 +1,13 @@
 import streamlit as st
-import random
 import shared.navbar as navbar_module
 from backend.leetcode_manager import LeetCodeManager
 import globals
 
 st.set_page_config(page_title="Select Criteria", layout="wide")
 globals.load_global_styles("globals.css")
-st.session_state.page = 'select_criteria'
+
+if "page" not in st.session_state:
+    st.session_state.page = "select_criteria"
 
 pages = {
     "About": "about",

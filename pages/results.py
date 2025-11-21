@@ -7,14 +7,13 @@ import requests  # for calling the FastAPI backend
 st.set_page_config(page_title="Results", layout="wide")
 globals.load_global_styles("globals.css")
 
-# Ensure page key exists
 if "page" not in st.session_state:
     st.session_state.page = "results"
 
 pages = {
     "About": "about",
     "Practice": "select_criteria",
-    "Dashboard": "dashboard",
+    "Dashboard": "dashboard"
 }
 
 navbar_module.apply_navbar_styles()

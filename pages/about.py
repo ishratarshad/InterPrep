@@ -7,6 +7,9 @@ import pandas as pd
 st.set_page_config(page_title="InterPrep", layout="wide")
 globals.load_global_styles("globals.css")
 
+if "page" not in st.session_state:
+    st.session_state.page = "about"
+
 pages = {
     "About": "about",
     "Practice": "select_criteria",
