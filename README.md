@@ -96,6 +96,28 @@ InterPrep/
 
 ---
 
+## Features
+
+### Core Functionality
+- **Voice-Interactive Practice** – Record explanations of your solutions using Whisper AI for automatic transcription
+- **Multi-Language Code Editor** – Write solutions in Python, JavaScript, C++, Java, Go, PHP, Swift, or TypeScript
+- **Problem Filtering** – Select problems by difficulty (Easy, Medium, Hard) and algorithm type
+- **AI-Powered Feedback** – Get evaluated on problem identification, complexity analysis, and explanation clarity using Gemini AI
+- **Progress Tracking** – Monitor your performance over time through an interactive dashboard
+
+### Algorithm Categories
+- Arrays & HashMaps
+- Two Pointers & Sliding Window
+- Binary Search
+- Linked Lists
+- Trees & Graphs
+- Heaps & Priority Queues
+- Dynamic Programming
+- Backtracking
+
+
+---
+
 ## How It Works
 
 ![InterPrep Workflow](images/readme-workflow.png)
@@ -119,25 +141,13 @@ Monitor your improvement over time through the dashboard
 
 ---
 
-## Features
+## Dataset
 
-### Core Functionality
-- **Voice-Interactive Practice** – Record explanations of your solutions using Whisper AI for automatic transcription
-- **Multi-Language Code Editor** – Write solutions in Python, JavaScript, C++, Java, Go, PHP, Swift, or TypeScript
-- **Problem Filtering** – Select problems by difficulty (Easy, Medium, Hard) and algorithm type
-- **AI-Powered Feedback** – Get evaluated on problem identification, complexity analysis, and explanation clarity using Gemini AI
-- **Progress Tracking** – Monitor your performance over time through an interactive dashboard
+**LeetCode Problem Dataset** from [Kaggle](https://www.kaggle.com/datasets/gzipchrist/leetcode-problem-dataset/data)
+- 1800+ curated problems across 10+ categories
+- Includes problem statements, difficulty levels, and metadata
 
-### Algorithm Categories
-- Arrays & HashMaps
-- Two Pointers & Sliding Window
-- Binary Search
-- Linked Lists
-- Trees & Graphs
-- Heaps & Priority Queues
-- Dynamic Programming
-- Backtracking
-
+![Leetcode Question Dataset](images/readme-dataset.png)
 
 ---
 
@@ -154,16 +164,6 @@ The system evaluates explanations on a **100-point scale**:
 | < 40 | Poor | Fails to meet basic criteria |
 
 See [evaluation/rubric.md](evaluation/rubric.md) for detailed scoring criteria.
-
----
-
-## Dataset
-
-**LeetCode Problem Dataset** from [Kaggle](https://www.kaggle.com/datasets/gzipchrist/leetcode-problem-dataset/data)
-- 1800+ curated problems across 10+ categories
-- Includes problem statements, difficulty levels, and metadata
-
-![Leetcode Question Dataset](images/readme-dataset.png)
 
 ---
 
