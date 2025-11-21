@@ -137,7 +137,7 @@ Receive AI-generated evaluation on:
 Monitor your improvement over time through the dashboard
 
 ---
-
+### Work Flow
 ![InterPrep Workflow](images/interprep-workflow.png)
 
 ---
