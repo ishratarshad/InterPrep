@@ -111,10 +111,14 @@ InterPrep/
 
 ---
 
+## Preview
+![InterPrep](images/readme-image.png)
+
+
 ## How It Works
 
-### 1. Select Criteria
-Choose your problem difficulty and algorithm types to get a curated question
+### 1. Select Criteria (Practice)
+Choose your criteria for problem difficulty and algorithm types to get a curated question
 
 ### 2. Practice Interview
 - Write your solution in the integrated code editor
@@ -127,7 +131,7 @@ Receive AI-generated evaluation on:
 - **Complexity Analysis (35 pts)** – Time/space complexity correctness
 - **Clarity of Explanation (30 pts)** – Structure, technical communication, completeness
 
-### 4. Track Progress
+### 4. Track Progress (Dashboard)
 Monitor your improvement over time through the dashboard
 
 ---
