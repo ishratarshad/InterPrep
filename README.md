@@ -136,6 +136,8 @@ Receive AI-generated evaluation on:
 ### 4. Track Progress (Dashboard)
 Monitor your improvement over time through the dashboard
 
+---
+
 ![InterPrep Workflow](images/interprep-workflow.png)
 
 ---
