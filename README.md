@@ -1,7 +1,13 @@
 # InterPrep: Voice-Interactive AI Interview Trainer
 
 ## Overview
-Many students practice LeetCode problems but struggle to explain their thought process clearly in technical interviews. **InterPrep** bridges this gap by providing a voice-interactive platform that simulates real interview conditions, helping you practice both coding and verbal communication skills.
+Many students practice LeetCode problems but struggle to explain their thought process clearly in technical interviews. 
+
+**InterPrep** bridges this gap by providing a *voice-interactive platform* that simulates real interview conditions, helping you practice both coding and verbal communication skills.
+
+---
+## Preview
+![InterPrep](images/readme-image.png)
 
 ---
 
@@ -29,20 +35,20 @@ Many students practice LeetCode problems but struggle to explain their thought p
 ## Tech Stack
 
 ### Frontend
-- **Streamlit** – Web application framework
-- **Streamlit Ace** – In-browser code editor with syntax highlighting
-- **Altair & Matplotlib** – Data visualization for progress tracking
+- ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white) – Web application framework
+- ![Ace Editor](https://img.shields.io/badge/Streamlit_Ace-000000?style=for-the-badge&logo=ace&logoColor=white) – In-browser code editor with syntax highlighting
+- ![Altair](https://img.shields.io/badge/Altair-1C78B6?style=for-the-badge&logo=altair&logoColor=white) ![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge&logo=matplotlib&logoColor=white) – Data visualization for progress tracking
 
 ### Backend & AI
-- **FastAPI** – RESTful API backend
-- **Whisper AI (faster-whisper)** – Automatic speech recognition for transcription
-- **Google Gemini API** – LLM-powered evaluation and feedback generation
-- **Pandas & NumPy** – Data processing and analysis
+- ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) – RESTful API backend
+- ![Whisper AI](https://img.shields.io/badge/Whisper_AI-000000?style=for-the-badge&logo=microphone&logoColor=white) (via [**faster-whisper**](https://github.com/SYSTRAN/faster-whisper)) – Automatic speech recognition for transcription
+- ![Google Gemini](https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white) – LLM-powered evaluation and feedback generation
+- ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white) – Data processing and analysis
 
 ### Machine Learning
-- **PyTorch** – Deep learning framework
-- **Transformers (Hugging Face)** – NLP model support
-- **scikit-learn** – ML utilities
+- ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white) – Deep learning framework
+- ![Transformers (Hugging Face)](https://img.shields.io/badge/Hugging_Face-FBA919?style=for-the-badge&logo=huggingface&logoColor=white) – NLP model support
+- ![scikit-learn](https://img.shields.io/badge/scikit_learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white) – ML utilities
 
 ---
 
@@ -110,10 +116,6 @@ InterPrep/
 ```
 
 ---
-
-## Preview
-![InterPrep](images/readme-image.png)
-
 
 ## How It Works
 
