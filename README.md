@@ -136,11 +136,11 @@ Receive AI-generated evaluation on:
 ### 4. Track Progress (Dashboard)
 Monitor your improvement over time through the dashboard
 
----
+```bash
 
 ![InterPrep Workflow](images/interprep-workflow.png)
 
----
+```
 
 ## Evaluation Rubric
 
