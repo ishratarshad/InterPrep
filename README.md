@@ -95,10 +95,10 @@ InterPrep/
 ```
 
 ---
-## Work Flow
-![InterPrep Workflow](images/readme-workflow.png)
 
 ## How It Works
+
+![InterPrep Workflow](images/readme-workflow.png)
 
 ### 1. Select Criteria (Practice)
 Choose your criteria for problem difficulty and algorithm types to get a curated question
@@ -162,6 +162,8 @@ See [evaluation/rubric.md](evaluation/rubric.md) for detailed scoring criteria.
 **LeetCode Problem Dataset** from [Kaggle](https://www.kaggle.com/datasets/gzipchrist/leetcode-problem-dataset/data)
 - 1800+ curated problems across 10+ categories
 - Includes problem statements, difficulty levels, and metadata
+
+![Leetcode Question Dataset](images/readme-dataset.png)
 
 ---
 
