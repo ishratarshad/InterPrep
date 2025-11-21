@@ -26,6 +26,9 @@ faster-whisper
 # Google Gemini LLM
 google-generativeai
 
+# Backend
+fastapi
+
 # Development
 pytest
 black
