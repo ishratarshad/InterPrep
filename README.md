@@ -11,27 +11,6 @@ Many students practice LeetCode problems but struggle to explain their thought p
 
 ---
 
-## Features
-
-### Core Functionality
-- **Voice-Interactive Practice** – Record explanations of your solutions using Whisper AI for automatic transcription
-- **Multi-Language Code Editor** – Write solutions in Python, JavaScript, C++, Java, Go, PHP, Swift, or TypeScript
-- **Problem Filtering** – Select problems by difficulty (Easy, Medium, Hard) and algorithm type
-- **AI-Powered Feedback** – Get evaluated on problem identification, complexity analysis, and explanation clarity using Gemini AI
-- **Progress Tracking** – Monitor your performance over time through an interactive dashboard
-
-### Algorithm Categories
-- Arrays & HashMaps
-- Two Pointers & Sliding Window
-- Binary Search
-- Linked Lists
-- Trees & Graphs
-- Heaps & Priority Queues
-- Dynamic Programming
-- Backtracking
-
----
-
 ## Tech Stack
 
 ### Frontend
@@ -116,6 +95,8 @@ InterPrep/
 ```
 
 ---
+## Work Flow
+![InterPrep Workflow](images/readme-workflow.png)
 
 ## How It Works
 
@@ -137,8 +118,26 @@ Receive AI-generated evaluation on:
 Monitor your improvement over time through the dashboard
 
 ---
-## Work Flow
-![InterPrep Workflow](images/interprep-workflow.png)
+
+## Features
+
+### Core Functionality
+- **Voice-Interactive Practice** – Record explanations of your solutions using Whisper AI for automatic transcription
+- **Multi-Language Code Editor** – Write solutions in Python, JavaScript, C++, Java, Go, PHP, Swift, or TypeScript
+- **Problem Filtering** – Select problems by difficulty (Easy, Medium, Hard) and algorithm type
+- **AI-Powered Feedback** – Get evaluated on problem identification, complexity analysis, and explanation clarity using Gemini AI
+- **Progress Tracking** – Monitor your performance over time through an interactive dashboard
+
+### Algorithm Categories
+- Arrays & HashMaps
+- Two Pointers & Sliding Window
+- Binary Search
+- Linked Lists
+- Trees & Graphs
+- Heaps & Priority Queues
+- Dynamic Programming
+- Backtracking
+
 
 ---
 
