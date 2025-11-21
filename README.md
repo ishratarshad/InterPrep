@@ -157,7 +157,7 @@ See [evaluation/rubric.md](evaluation/rubric.md) for detailed scoring criteria.
 ## Dataset
 
 **LeetCode Problem Dataset** from [Kaggle](https://www.kaggle.com/datasets/gzipchrist/leetcode-problem-dataset/data)
-- 120+ curated problems across 10+ categories
+- 1800+ curated problems across 10+ categories
 - Includes problem statements, difficulty levels, and metadata
 
 ---
