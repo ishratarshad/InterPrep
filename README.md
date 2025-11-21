@@ -87,10 +87,10 @@ The app will open in your browser at `http://localhost:8501`
 
 ```
 InterPrep/
-├── app.py                      # Main application entry point
+├── app.py                     # Main application entry point
 ├── pages/
 │   ├── about.py               # Landing page with project info
-│   ├── select_criteria.py    # Problem filter selection
+│   ├── select_criteria.py     # Problem filter selection
 │   ├── interview.py           # Code editor + audio recording
 │   ├── results.py             # Evaluation and feedback display
 │   └── dashboard.py           # Progress tracking and metrics
@@ -99,8 +99,12 @@ InterPrep/
 │   ├── transcription.py       # Whisper integration
 │   └── leetcode_manager.py    # Problem filtering logic
 ├── evaluation/                # Rubric and grading documentation
+├── code/                      # stores user's code solution; generated upon run-through of code
+├── audio/                     # stores user's audio clip; generated upon run-through of code
+├── transcript/                # stores user's audio transcript; generated upon run-through of code
 ├── shared/
 │   └── navbar.py              # Navigation component
+├── .env                       # stores environment variables
 ├── globals.py                 # Shared styles and constants
 └── requirements.txt
 ```
