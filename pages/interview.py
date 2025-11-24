@@ -37,43 +37,6 @@ if filtered_questions:
     st.markdown("#### Question:")
     st.write(st.session_state.current_question["question"])
 
-# Follow-up questions
-# follow_up_questions = [
-#     "Walk me through your code line by line and explain the logic.",
-#     "Explain your approach to the problem and your solution.",
-#     "What is the time and space complexity of your code? Could it be optimized? Explain.",
-#     "Why did you choose this particular data structure or algorithm?",
-#     "How does your solution handle edge cases or very large inputs?",
-#     "How does your solution scale with increasing data size?",
-#     "What trade-offs did you consider when designing your solution?",
-#     "If you had more time, how would you improve your solution?",
-#     "How would you test this function or algorithm for correctness and performance?",
-#     "What are potential bugs or failure points in your implementation?",
-#     "How does your code compare to a brute-force solution?",
-#     "How can you refactor your code to make it more readable and maintainable?",
-#     "How do you prioritize between code readability, maintainability, and performance?",
-#     "What assumptions does your solution make about the input or environment?",
-#     "Can you provide an example input and explain how your code processes it step by step?",
-#     "Describe how you would debug a failing or slow-running piece of code.",
-#     "What is the worst-case scenario for your algorithm and how do you handle it?",
-#     "What alternative approaches would you consider for this problem and why would you reject them?",
-#     "Explain how you balance between readability and performance in your code.",
-#     "Tell me about a challenging part you encountered in the problem, and the steps you took to resolve it.",
-#     "Can you restate the problem in your own words, and discuss a possible solution?",
-#     "How will you address any constraints or special conditions that your solution must handle?",
-#     "What edge cases or unusual scenarios should be considered for this problem?",
-#     "How would you break down the problem into smaller, manageable parts?",
-#     "Can you identify potential challenges or pitfalls in solving this problem?",
-#     "Can you provide a high-level outline or plan before diving into code?",
-#     "Are there any performance or scalability considerations specific to this problem?",
-#     "How does this problem relate to others you've solved or studied?",
-#     "Can you think of any real-world applications or scenarios where this problem arises?",
-#     "How would you communicate this problem and your solution approach to non-technical stakeholders?",
-#     "How would you validate that your solution meets all functional and non-functional requirements?",
-# ]
-
-# selected_question = random.choice(follow_up_questions)
-
 # ---------------------------------
 # ACE Editor Session Management
 # ---------------------------------
@@ -102,15 +65,6 @@ if "initial_code" not in st.session_state:
 lang_keys = list(globals.ACE_LANG_OPTIONS.keys())
 selected_index = lang_keys.index(st.session_state["language_select"])
 
-# Select language
-lang_display = st.selectbox(
-    "Select Programming Language",
-    options=lang_keys,
-    index=selected_index,
-    key="language_select",
-    on_change=update_session_state
-)
-
 selected_lang_ext = st.session_state["selected_lang_extension"]
 initial_code = st.session_state["initial_code"]
 
@@ -135,18 +89,31 @@ def success_message(msg="Code saved!"):
 # Layout: Code Editor + Audio
 # ---------------------------------
 
+st.divider()
 col1, col2 = st.columns([1, 0.75])
 
 # ==========================
 # CODE EDITOR
 # ==========================
 with col1:
+    # Select language
+    lang_display = st.selectbox(
+        "Select Programming Language",
+        options=lang_keys,
+        index=selected_index,
+        key="language_select",
+        on_change=update_session_state
+    )
+
+    # ACE code editor
+    st.write("Solution:")
     code = st_ace(
         value=initial_code,
         language=selected_lang_ext,
         auto_update=True,
         theme='dracula',
         key=f'ace_editor_{st.session_state["language_select"]}',
+        height=300
     )
 
     spc1, col, spc2 = st.columns(3)
