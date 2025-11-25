@@ -4,22 +4,10 @@ import os
 from faster_whisper import WhisperModel
 
 class TranscriptionService:
-    # def __init__(self, model_name="openai/whisper-small.en"):
-    #     print(f"Loading {model_name}...")
     def __init__(self, model_size="small"):
         print(f"Loading {model_size} model...")
-
-        # device = 0 if torch.cuda.is_available() else -1
         device = "cuda" if torch.cuda.is_available() else "cpu"
-
-        # self.pipe = pipeline(
-        #     "automatic-speech-recognition",
-        #     model=model_name,
-        #     device=device
-        # )
         self.model = WhisperModel(model_size, device=device)
-
-        # print(f"✓ Ready on {'CUDA' if device == 0 else 'CPU'}")
         print(f"✓ Ready on {device}")
 
     def transcribe(self, audio_path: str) -> str:
