@@ -7,14 +7,14 @@ import time
 import globals
 from backend.transcription import TranscriptionService
 
-# Page config & styles
+
 st.set_page_config(page_title="Practice", layout="wide")
 globals.load_global_styles("globals.css")
 
 if "page" not in st.session_state:
     st.session_state.page = "interview"
 
-# Navigation setup
+
 pages = {
     "About": "about",
     "Practice": "select_criteria",
@@ -23,7 +23,7 @@ pages = {
 navbar_module.apply_navbar_styles()
 navbar_module.navbar(pages, st.session_state.page)
 
-# -- Interview Question --
+
 st.header("Interview Question")
 
 filtered_questions = st.session_state.get("filtered_questions", [])
@@ -34,10 +34,36 @@ if st.session_state.get("current_question") is None and filtered_questions:
     st.session_state.current_question = random.choice(filtered_questions)
 
 if filtered_questions:
-    st.markdown("#### Question:")
-    st.write(st.session_state.current_question["question"])
+    current_q = st.session_state.current_question
+    
+    
+    col1, col2, col3 = st.columns([2, 1, 1])
+    with col1:
+        st.markdown(f"### {current_q.get('title', 'Untitled Problem')}")
+    with col2:
+        difficulty = current_q.get('difficulty', 'medium').capitalize()
+        difficulty_colors = {
+            'Easy': '🟢',
+            'Medium': '🟡', 
+            'Hard': '🔴'
+        }
+        st.markdown(f"**Difficulty:** {difficulty_colors.get(difficulty, '⚪')} {difficulty}")
+    with col3:
+        category = current_q.get('category', 'General')
+        st.markdown(f"**Type:** {category}")
+    
+    
+    companies = current_q.get('companies', 'N/A')
+    if companies and companies != 'N/A':
+        st.markdown(f"**🏢 Companies:** {companies}")
+    
+    st.divider()
+    
+    
+    st.markdown("#### Problem Statement:")
+    st.write(current_q["question"])
 
-# Follow-up questions
+
 follow_up_questions = [
     "Walk me through your code line by line and explain the logic.",
     "Explain your approach to the problem and your solution.",
@@ -74,9 +100,6 @@ follow_up_questions = [
 
 selected_question = random.choice(follow_up_questions)
 
-# ---------------------------------
-# ACE Editor Session Management
-# ---------------------------------
 
 def update_session_state():
     lang_name = st.session_state["language_select"]
@@ -102,7 +125,8 @@ if "initial_code" not in st.session_state:
 lang_keys = list(globals.ACE_LANG_OPTIONS.keys())
 selected_index = lang_keys.index(st.session_state["language_select"])
 
-# Select language
+
+st.write("")
 lang_display = st.selectbox(
     "Select Programming Language",
     options=lang_keys,
@@ -114,7 +138,7 @@ lang_display = st.selectbox(
 selected_lang_ext = st.session_state["selected_lang_extension"]
 initial_code = st.session_state["initial_code"]
 
-# File paths
+
 code_folder = 'code'
 save_destination = f"user_code.{selected_lang_ext}"
 
@@ -123,7 +147,7 @@ if not os.path.exists(code_folder):
 
 file_path = os.path.join(code_folder, save_destination)
 
-# Success message
+
 def success_message(msg="Code saved!"):
     placeholder = st.empty()
     placeholder.success(msg)
@@ -131,15 +155,9 @@ def success_message(msg="Code saved!"):
     placeholder.empty()
 
 
-# ---------------------------------
-# Layout: Code Editor + Audio
-# ---------------------------------
 
 col1, col2 = st.columns([1.45, 0.65])
 
-# ==========================
-# CODE EDITOR
-# ==========================
 with col1:
     code = st_ace(
         value=initial_code,
@@ -155,9 +173,7 @@ with col1:
         success_message()
 
 
-# ==========================
-# AUDIO RECORDING + WHISPER
-# ==========================
+
 with col2:
     status = st.status(f":orange[{selected_question}]", expanded=False)
 
@@ -172,7 +188,7 @@ with col2:
 
         status.update(label="Audio saved!", state="complete")
 
-        # Cache whisper model
+        
         @st.cache_resource
         def load_transcription():
             return TranscriptionService(model_size="small")
@@ -188,12 +204,12 @@ with col2:
 
                     st.success("✅ Transcribed!")
 
-                    # Save transcript
+                    
                     os.makedirs("transcript", exist_ok=True)
                     with open("transcript/transcript.txt", "w", encoding="utf-8") as f:
                         f.write(transcript)
 
-                    # Preview
+                    
                     with st.expander("Transcript Preview", expanded=True):
                         st.write(transcript)
                         st.caption(f"{len(transcript.split())} words")
@@ -203,11 +219,6 @@ with col2:
 
             except Exception as e:
                 st.error(f"Error: {e}")
-
-
-# ---------------------------------
-# Navigation
-# ---------------------------------
 
 st.divider()
 col1, spc, col2 = st.columns([1, 1, 1])
@@ -219,5 +230,7 @@ if col2.button("Submit & View Results", key="results_btn", use_container_width=T
     with open(file_path, "w") as f:
         f.write(code)
 
+    st.session_state.page = 'results'
+    st.switch_page("pages/results.py")
     st.session_state.page = 'results'
     st.switch_page("pages/results.py")
