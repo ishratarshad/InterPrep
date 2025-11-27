@@ -20,6 +20,9 @@ torchaudio
 # Optional: For enhanced text processing
 nltk
 
+# Audio recording
+
+
 # Audio Processing (Whisper integration)
 faster-whisper
 
