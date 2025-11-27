@@ -29,12 +29,18 @@ st.header("Select Criteria")
 st.write("")
 
 # Filters
-difficulty = st.multiselect("Difficulty", ["Easy", "Medium", "Hard"], key="difficulty")
+difficulty = st.multiselect(
+    "Difficulty", 
+    ["Easy", "Medium", "Hard"], 
+    key="difficulty", 
+    default=["Easy"]
+)
 st.divider()
 algorithm_types = st.multiselect(
     "Algorithm Type",
     ["Array", "String", "Tree", "Graph", "Dynamic Programming", "Greedy", "Backtracking"],
-    key="algorithm_types"
+    key="algorithm_types",
+    default=["Array", "String"]
 )
 
 st.write("")
