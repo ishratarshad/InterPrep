@@ -28,20 +28,36 @@ manager = load_manager()
 st.header("Select Criteria")
 st.write("")
 
-# Filters
+# Difficulty Filter
 difficulty = st.multiselect(
     "Difficulty", 
     ["Easy", "Medium", "Hard"], 
-    key="difficulty", 
-    default=["Easy"]
+    key="difficulty",
+    help="Select one or more difficulty levels"
 )
 st.divider()
+
+# Algorithm Type Filter
 algorithm_types = st.multiselect(
     "Algorithm Type",
     ["Array", "String", "Tree", "Graph", "Dynamic Programming", "Greedy", "Backtracking"],
     key="algorithm_types",
-    default=["Array", "String"]
+    help="Select one or more algorithm categories"
 )
+st.divider()
+
+# Company Filter
+available_companies = manager.get_available_companies()
+if available_companies:
+    companies = st.multiselect(
+        "Filter by Company (Optional)",
+        available_companies,
+        key="companies",
+        help="Select companies to filter questions tagged by those companies"
+    )
+else:
+    companies = []
+    st.info("Company data not available in the dataset.")
 
 st.write("")
 st.write("")
@@ -52,16 +68,21 @@ st.write("")
 spc1, col, spc2 = st.columns([1, 1, 1])
 
 with col:
-    if st.button("Start Interview", width='stretch'):
-        if not difficulty and not algorithm_types:
+    if st.button("Start Interview", use_container_width=True):
+        if not difficulty and not algorithm_types and not companies:
             st.error("Select at least one filter.")
         else:
             # Convert to backend format
             diff_fmt = [d.lower() for d in difficulty] if difficulty else None
             algo_fmt = [a.lower().replace(' ', '_') for a in algorithm_types] if algorithm_types else None
+            company_fmt = companies if companies else None
             
             # Get problems
-            filtered = manager.get_problems_by_criteria(difficulty=diff_fmt, algorithm_types=algo_fmt)
+            filtered = manager.get_problems_by_criteria(
+                difficulty=diff_fmt, 
+                algorithm_types=algo_fmt,
+                companies=company_fmt
+            )
             
             if filtered:
                 st.session_state.filtered_questions = filtered
@@ -71,4 +92,4 @@ with col:
                 st.session_state.page = 'interview'
                 st.switch_page("pages/interview.py")
             else:
-                st.error("No problems match selection.")
+                st.error("No problems match your selection. Try broadening your criteria.")
