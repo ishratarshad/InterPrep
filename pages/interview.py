@@ -34,8 +34,36 @@ if st.session_state.get("current_question") is None and filtered_questions:
     st.session_state.current_question = random.choice(filtered_questions)
 
 if filtered_questions:
-    st.markdown("#### Question:")
-    st.write(st.session_state.current_question["question"])
+    current_q = st.session_state.current_question
+    
+    # Display question metadata
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.markdown(f"#### {current_q['title']}")
+    with col2:
+        difficulty_color = {
+            'easy': '🟢',
+            'medium': '🟡', 
+            'hard': '🔴'
+        }
+        diff = current_q.get('difficulty', 'medium').lower()
+        st.markdown(f"**Difficulty:** {difficulty_color.get(diff, '⚪')} {diff.title()}")
+    
+    # Display topics/categories
+    topics = current_q.get('topics', [])
+    if topics:
+        st.markdown(f"**Topics:** {', '.join(topics[:5])}")  # Show first 5 topics
+    
+    # Display companies if available
+    companies = current_q.get('companies', '')
+    if companies:
+        company_list = [c.strip() for c in companies.split(',') if c.strip()]
+        if company_list:
+            st.markdown(f"**Asked by:** {', '.join(company_list[:5])}")
+    
+    st.divider()
+    st.markdown("#### Problem Description:")
+    st.write(current_q["question"])
 
 # ---------------------------------
 # ACE Editor Session Management
@@ -118,7 +146,7 @@ with col1:
 
     spc1, col, spc2 = st.columns(3)
     with col:
-        if st.button("Save Code", width='stretch'):
+        if st.button("Save Code", use_container_width=True):
             with open(file_path, "w") as f:
                 f.write(code)
             success_message()
