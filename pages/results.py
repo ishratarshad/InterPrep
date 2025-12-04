@@ -54,13 +54,11 @@ st.divider()
 
 # ------------- HELPER: COMPUTE OVERALL SCORE -------------
 def compute_overall_score(score_dict: dict):
-    keys = ["problem_id", "complexity", "clarity"]
-    vals = [score_dict.get(k, 0) for k in keys if score_dict.get(k, 0) is not None]
-
+    vals = [score_dict.get(k, 0) for k in ["problem_id", "complexity", "clarity"]]
     if not vals:
         return None, "No score", "No rubric scores were returned."
 
-    per_dim_max = 3  # since LLM scoring is 1–3
+    per_dim_max = 3  # scoring scale 1–3
     overall_ratio = sum(vals) / (len(vals) * per_dim_max)
     overall_pct = int(round(overall_ratio * 100))
 
@@ -89,9 +87,9 @@ with col1:
     ]:
         try:
             with open(f"evaluation/{fname}", "r", encoding="utf-8") as f:
-                md_content = f.read()
+                md = f.read()
             with st.expander(title, expanded=True):
-                st.markdown(md_content)
+                st.markdown(md)
         except FileNotFoundError:
             st.warning(f"Rubric file {fname} not found.")
 
@@ -99,7 +97,6 @@ with col1:
 with col2:
     st.markdown("#### LLM-Based Evaluation")
     backend_url = "http://127.0.0.1:8000/analyze"
-
     analysis_result = st.session_state.get("analysis_result")
     eval_running = st.session_state.get("eval_running", False)
 
@@ -108,108 +105,157 @@ with col2:
             st.session_state["eval_running"] = True
             with st.spinner("Analyzing your explanation with the LLM..."):
                 try:
-                    resp = requests.post(
-                        backend_url,
-                        json={"transcript": transcript_text},
-                        timeout=60,
-                    )
+                    resp = requests.post(backend_url, json={"transcript": transcript_text}, timeout=60)
                     if resp.status_code == 200:
                         analysis_result = resp.json()
                         st.session_state["analysis_result"] = analysis_result
                     else:
                         st.error(f"Backend error {resp.status_code}: {resp.text}")
-                except Exception as e:
-                    st.error(f"Error calling analysis backend: {e}")
                 finally:
                     st.session_state["eval_running"] = False
 
         if st.button("Re-run Evaluation"):
             with st.spinner("Re-running evaluation..."):
-                try:
-                    resp = requests.post(
-                        backend_url,
-                        json={"transcript": transcript_text},
-                        timeout=60,
-                    )
-                    if resp.status_code == 200:
-                        analysis_result = resp.json()
-                        st.session_state["analysis_result"] = analysis_result
-                    else:
-                        st.error(f"Backend error {resp.status_code}: {resp.text}")
-                except Exception as e:
-                    st.error(f"Error calling analysis backend: {e}")
+                resp = requests.post(backend_url, json={"transcript": transcript_text}, timeout=60)
+                if resp.status_code == 200:
+                    analysis_result = resp.json()
+                    st.session_state["analysis_result"] = analysis_result
+                else:
+                    st.error(f"Backend error {resp.status_code}: {resp.text}")
 
         if analysis_result:
             score = analysis_result.get("score", {})
             overall_pct, overall_label, level_msg = compute_overall_score(score)
 
-            # ---------- Overall Score Badge ----------
-            badge_color = (
-                "#16a34a" if overall_pct >= 85
-                else "#eab308" if overall_pct >= 60
-                else "#ef4444"
-            )
-
+            # ---------- SCORE BADGE ----------
+            badge_color = "#16a34a" if overall_pct >= 85 else "#eab308" if overall_pct >= 60 else "#ef4444"
             st.markdown("##### Overall Score")
             st.markdown(
                 f"""
-                <div style="
-                    padding:0.75rem 1rem;
-                    border-radius:0.75rem;
-                    background-color:rgba(148,163,184,0.08);
-                    border:1px solid rgba(148,163,184,0.4);
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    margin-bottom:0.5rem;">
+                <div style="padding:0.75rem 1rem;border-radius:0.75rem;background-color:rgba(148,163,184,0.08);
+                border:1px solid rgba(148,163,184,0.4);display:flex;justify-content:space-between;">
                     <div>
                         <div style="font-size:1.4rem;font-weight:700;">{overall_pct}%</div>
                         <div style="font-size:0.9rem;color:#cbd5f5;">{overall_label}</div>
                     </div>
-                    <div style="
-                        padding:0.35rem 0.75rem;
-                        border-radius:999px;
-                        background-color:{badge_color};
-                        color:white;
-                        font-size:0.8rem;
-                        font-weight:600;">
-                        Interview Readiness
-                    </div>
+                    <div style="padding:0.35rem 0.75rem;border-radius:999px;background-color:{badge_color};
+                    color:white;font-size:0.8rem;font-weight:600;">Interview Readiness</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
             st.caption(level_msg)
 
-            # ---------- Rubric Breakdown ----------
+            # ---------- BREAKDOWN ----------
             st.markdown("##### Rubric Breakdown")
             c1, c2, c3 = st.columns(3)
             c1.metric("Problem Match", score.get("problem_id", 0))
             c2.metric("Complexity", score.get("complexity", 0))
             c3.metric("Clarity", score.get("clarity", 0))
 
-            # ---------- Transcript Comments ----------
             st.markdown("##### Transcript Evaluation Comments")
-            comments = analysis_result.get("comments", [])
-            if comments:
-                for comment in comments:
-                    st.write(f"- {comment}")
-            else:
-                st.write("No comments returned by the model.")
+            for comment in analysis_result.get("comments", []):
+                st.write(f"- {comment}")
 
-            # ---------- Overall Level ----------
             st.markdown("##### Overall Level")
             st.write(analysis_result.get("overall_level", "beginner"))
 
-            # ---------- 🎯 PERSONALIZED FEEDBACK MOVED HERE ----------
+            # ---------- PERSONALIZED FEEDBACK ----------
             st.markdown("#### Personalized Feedback")
             st.info(analysis_result.get("reasoning", "No detailed reasoning provided."))
 
+            # ---------- 🎯 LESSON PLAN SECTION ----------
+            st.subheader("How To Improve (Lesson Plan)")
+            predicted = analysis_result.get("predicted_category", "").lower()
+
+            LESSON_PLANS = {
+                "arrays": """
+**Topics to Review**
+- Prefix sums, in-place updates, sorting patterns
+**Recommended Problems**
+- 53 Maximum Subarray
+- 238 Product of Array Except Self
+""",
+                "hashmap": """
+**Topics to Review**
+- Constant time lookups and removing nested loops
+**Recommended Problems**
+- 1 Two Sum
+- 560 Subarray Sum Equals K
+""",
+                "two_pointers": """
+**Pattern**
+Move two indices toward each other to reduce search space
+**Recommended Problems**
+- 11 Container With Most Water
+- 15 3Sum
+""",
+                "sliding_window": """
+**Pattern**
+Expand/shrink window to maintain constraint
+**Recommended Problems**
+- 3 Longest Substring Without Repeating Characters
+- 76 Minimum Window Substring
+""",
+                "binary_search": """
+**Pattern**
+Identify monotonic condition in answer space
+**Recommended Problems**
+- 704 Binary Search
+- 33 Search in Rotated Array
+""",
+                "linked_list": """
+**Pattern**
+Pointer manipulation and dummy nodes
+**Recommended Problems**
+- 206 Reverse Linked List
+- 141 Linked List Cycle
+""",
+                "tree": """
+**Pattern**
+DFS/BFS traversals and recursion invariants
+**Recommended Problems**
+- 104 Max Depth of Binary Tree
+- 236 LCA
+""",
+                "graph": """
+**Pattern**
+Traversal with visited sets, detecting cycles
+**Recommended Problems**
+- 200 Number of Islands
+- 207 Course Schedule
+""",
+                "heap": """
+**Pattern**
+Priority queue for top-k or streaming problems
+**Recommended Problems**
+- 215 Kth Largest
+- 347 Top K Frequent
+""",
+                "dp": """
+**Pattern**
+Define state, recurrence, base cases
+**Recommended Problems**
+- 70 Climbing Stairs
+- 300 LIS
+""",
+                "backtracking": """
+**Core Idea**
+Try → explore → revert (undo choice)
+**Recommended Problems**
+- 46 Permutations
+- 39 Combination Sum
+"""
+            }
+
+            st.markdown(
+                LESSON_PLANS.get(predicted, "A lesson plan will be available once a valid category is detected.")
+            )
+
         else:
-            if not eval_running:
-                st.info("Evaluation will run automatically once a transcript is available.")
+            st.info("Evaluation will run automatically once a transcript is available.")
     else:
-        st.info("Transcript is required for LLM evaluation. Please record and submit from the Practice page first.")
+        st.info("Transcript is required for LLM evaluation.")
 
 st.divider()
 
