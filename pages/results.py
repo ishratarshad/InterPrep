@@ -13,7 +13,7 @@ if "page" not in st.session_state:
 pages = {
     "About": "about",
     "Practice": "select_criteria",
-    "Dashboard": "dashboard"
+    "Dashboard": "dashboard",
 }
 
 navbar_module.apply_navbar_styles()
@@ -97,17 +97,39 @@ with col2:
 
     backend_url = "http://127.0.0.1:8000/analyze"
 
-    # show existing result if we already called the backend
+    # current state
     analysis_result = st.session_state.get("analysis_result")
+    eval_running = st.session_state.get("eval_running", False)
 
     if transcript_text:
-        if st.button("Run LLM Evaluation"):
+        # ---------- AUTO-RUN once when we land here ----------
+        if analysis_result is None and not eval_running:
+            st.session_state["eval_running"] = True
             with st.spinner("Analyzing your explanation with the LLM..."):
                 try:
                     resp = requests.post(
                         backend_url,
                         json={"transcript": transcript_text},
-                        timeout=30,
+                        timeout=60,
+                    )
+                    if resp.status_code != 200:
+                        st.error(f"Backend error {resp.status_code}: {resp.text}")
+                    else:
+                        analysis_result = resp.json()
+                        st.session_state["analysis_result"] = analysis_result
+                except Exception as e:
+                    st.error(f"Error calling analysis backend: {e}")
+                finally:
+                    st.session_state["eval_running"] = False
+
+        # optional manual re-run
+        if st.button("Re-run Evaluation"):
+            with st.spinner("Re-running evaluation..."):
+                try:
+                    resp = requests.post(
+                        backend_url,
+                        json={"transcript": transcript_text},
+                        timeout=60,
                     )
                     if resp.status_code != 200:
                         st.error(f"Backend error {resp.status_code}: {resp.text}")
@@ -117,6 +139,7 @@ with col2:
                 except Exception as e:
                     st.error(f"Error calling analysis backend: {e}")
 
+        # ---------- display results ----------
         if analysis_result:
             st.markdown("##### Predicted Category")
             st.write(analysis_result.get("predicted_category", "unknown"))
@@ -142,7 +165,8 @@ with col2:
             st.markdown("##### Overall Level")
             st.write(analysis_result.get("overall_level", "beginner"))
         else:
-            st.info("Click **Run LLM Evaluation** to score your explanation.")
+            if not eval_running:
+                st.info("Evaluation will run automatically once a transcript is available.")
     else:
         st.info("Transcript is required for LLM evaluation. Please record and submit from the Practice page first.")
 
@@ -150,11 +174,12 @@ st.divider()
 
 # ----------------- PERSONALIZED FEEDBACK -----------------
 st.subheader("Personalized Feedback")
+analysis_result = st.session_state.get("analysis_result")
 if analysis_result:
     st.markdown("Below is a summary of the model's feedback on your explanation.")
     st.info(analysis_result.get("reasoning", "No detailed reasoning provided by the model."))
 else:
-    st.info("LLM feedback will appear here after you run the evaluation.")
+    st.info("LLM feedback will appear here after the evaluation finishes.")
 
 # ----------------- NAVIGATION -----------------
 st.write("")
