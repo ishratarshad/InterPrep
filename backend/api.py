@@ -106,17 +106,43 @@ def health():
     return {"status": "ok"}
 
 
+# --------- JSON extraction helper ---------
+
+def extract_json_safely(raw: str):
+    """
+    Try multiple strategies to extract valid JSON from LLM output.
+    If none succeed, return None.
+    """
+    raw = raw.strip()
+
+    # 1) direct eval
+    try:
+        return json.loads(raw)
+    except Exception:
+        pass
+
+    # 2) extract between first { and last }
+    start = raw.find("{")
+    end = raw.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        try:
+            candidate = raw[start:end+1]
+            return json.loads(candidate)
+        except Exception:
+            pass
+
+    # 3) strip ```json fences
+    cleaned = raw.replace("```json", "").replace("```", "").strip()
+    try:
+        return json.loads(cleaned)
+    except Exception:
+        return None
+
+
 # --------- Gemini-powered /analyze ---------
 
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest):
-    """
-    Use Gemini to:
-    - classify algorithm category
-    - score problem_id / complexity / clarity
-    - generate comments
-    - decide overall_level
-    """
     transcript = req.transcript
 
     prompt = f"""
@@ -125,8 +151,7 @@ for a coding interview problem.
 
 Here is the candidate's spoken explanation (transcript):
 
-\"\"\"{transcript}\"\"\"
-
+\"\"\"{transcript}\"\"\"\n
 Use this rubric:
 
 {RUBRIC_TEXT}
@@ -134,16 +159,7 @@ Use this rubric:
 CATEGORIES (use exactly one of these):
 {", ".join(CATEGORIES)}
 
-Now:
-
-1. Decide which algorithm category best matches the explanation.
-2. Score problem_id, complexity, clarity from 1–3 as defined above.
-3. Provide a short explanation of your reasoning (2–4 sentences).
-4. Provide 2–3 short, concrete comments to help the candidate improve.
-5. Estimate a confidence score between 0 and 1.
-6. Choose an overall_level from: "beginner", "intermediate", "advanced".
-
-Respond with ONLY valid JSON in exactly this format:
+Respond with ONLY valid JSON in this exact schema:
 
 {{
     "predicted_category": "one_of_the_categories",
@@ -161,51 +177,40 @@ Respond with ONLY valid JSON in exactly this format:
     "overall_level": "beginner"
 }}
 """
-
-    # ---- 1. Call Gemini safely ----
+    # ---- 1. Call Gemini ----
     try:
         result = gemini_model.generate_content(prompt)
         raw_text = result.text.strip()
     except Exception as e:
-        # If Gemini itself fails (bad key, quota, etc.)
         score = Score(problem_id=1, complexity=1, clarity=1)
         return AnalyzeResponse(
             predicted_category="unknown",
-            reasoning=f"Error calling Gemini API: {repr(e)}",
+            reasoning=f"Error contacting model: {repr(e)}",
             confidence=0.0,
             score=score,
-            comments=[
-                "The system could not contact the analysis model.",
-                "Check your API key / quota and try again."
-            ],
+            comments=["Backend model unavailable. Try again later."],
             overall_level="beginner",
         )
 
-    # ---- 2. Clean possible code fences ----
-    if raw_text.startswith("```"):
-        raw_text = raw_text.strip("`")
-        raw_text = raw_text.replace("json", "", 1).strip()
+    # ---- 2. Extract JSON robustly ----
+    data = extract_json_safely(raw_text)
 
-    # ---- 3. Parse JSON ----
-    try:
-        data = json.loads(raw_text)
-    except json.JSONDecodeError:
+    # ---- 3. Fallback if JSON invalid ----
+    if data is None:
         data = {
             "predicted_category": "unknown",
-            "reasoning": f"Failed to parse JSON from model output: {raw_text[:200]}",
+            "reasoning": "Your explanation could not be evaluated. Try re-recording with a clear problem statement, approach, and complexity.",
             "confidence": 0.0,
-            "score": {
-                "problem_id": 1,
-                "complexity": 1,
-                "clarity": 1
-            },
+            "score": {"problem_id": 1, "complexity": 1, "clarity": 1},
             "comments": [
-                "The system had trouble understanding the model output.",
-                "Try again and make sure to clearly describe your approach and complexity."
+                "State the exact goal of the problem.",
+                "Walk through your algorithm step-by-step.",
+                "Mention time and space complexity explicitly."
             ],
-            "overall_level": "beginner"
+            "overall_level": "beginner",
         }
 
+    # ---- 4. Convert Score safely ----
     score_obj = data.get("score", {})
     score = Score(
         problem_id=int(score_obj.get("problem_id", 1)),
@@ -213,6 +218,7 @@ Respond with ONLY valid JSON in exactly this format:
         clarity=int(score_obj.get("clarity", 1)),
     )
 
+    # ---- 5. Return structured response ----
     return AnalyzeResponse(
         predicted_category=str(data.get("predicted_category", "unknown")),
         reasoning=str(data.get("reasoning", "")),

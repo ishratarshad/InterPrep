@@ -45,7 +45,6 @@ with col1:
 with col2:
     st.markdown("#### Transcribed Audio")
     transcript_text = st.session_state.get("transcript", "")
-
     if transcript_text:
         st.write(transcript_text)
     else:
@@ -53,56 +52,58 @@ with col2:
 
 st.divider()
 
+# ------------- HELPER: COMPUTE OVERALL SCORE -------------
+def compute_overall_score(score_dict: dict):
+    keys = ["problem_id", "complexity", "clarity"]
+    vals = [score_dict.get(k, 0) for k in keys if score_dict.get(k, 0) is not None]
+
+    if not vals:
+        return None, "No score", "No rubric scores were returned."
+
+    per_dim_max = 3  # since LLM scoring is 1–3
+    overall_ratio = sum(vals) / (len(vals) * per_dim_max)
+    overall_pct = int(round(overall_ratio * 100))
+
+    if overall_pct >= 85:
+        label = "Strong"
+        msg = "Great job — this explanation looks interview-ready with just minor polishing."
+    elif overall_pct >= 60:
+        label = "On Track"
+        msg = "You’re on a good path. Some areas need tightening, but the core understanding is there."
+    else:
+        label = "Needs Work"
+        msg = "There are gaps in the explanation. Use the rubric below to see what to improve next."
+
+    return overall_pct, label, msg
+
 # ----------------- SCORING & RUBRIC TEXT -----------------
 st.subheader("Scoring & Evaluation")
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    # rubric markdowns
-    try:
-        with open("evaluation/1_problem_identification.md", "r", encoding="utf-8") as f:
-            md_content = f.read()
-        with st.expander("#1 Problem Identification", expanded=True):
-            st.markdown(md_content)
-    except FileNotFoundError:
-        st.warning("Rubric file 1_problem_identification.md not found.")
-
-    try:
-        with open("evaluation/2_complexity_analysis.md", "r", encoding="utf-8") as f:
-            md_content = f.read()
-        with st.expander("#2 Complexity Analysis", expanded=True):
-            st.markdown(md_content)
-    except FileNotFoundError:
-        st.warning("Rubric file 2_complexity_analysis.md not found.")
-
-    try:
-        with open("evaluation/3_clarity_explanation.md", "r", encoding="utf-8") as f:
-            md_content = f.read()
-        with st.expander("#3 Clarity of Explanation", expanded=True):
-            st.markdown(md_content)
-    except FileNotFoundError:
-        st.warning("Rubric file 3_clarity_explanation.md not found.")
-
-    try:
-        with open("evaluation/4_edge_case_error_handling.md", "r", encoding="utf-8") as f:
-            md_content = f.read()
-        with st.expander("#4 Edge Cases & Error Handling", expanded=True):
-            st.markdown(md_content)
-    except FileNotFoundError:
-        st.warning("Rubric file 4_edge_case_error_handling.md not found.")
+    for fname, title in [
+        ("1_problem_identification.md", "#1 Problem Identification"),
+        ("2_complexity_analysis.md", "#2 Complexity Analysis"),
+        ("3_clarity_explanation.md", "#3 Clarity of Explanation"),
+        ("4_edge_case_error_handling.md", "#4 Edge Cases & Error Handling"),
+    ]:
+        try:
+            with open(f"evaluation/{fname}", "r", encoding="utf-8") as f:
+                md_content = f.read()
+            with st.expander(title, expanded=True):
+                st.markdown(md_content)
+        except FileNotFoundError:
+            st.warning(f"Rubric file {fname} not found.")
 
 # ----------------- LLM SCORING PANEL -----------------
 with col2:
     st.markdown("#### LLM-Based Evaluation")
-
     backend_url = "http://127.0.0.1:8000/analyze"
 
-    # current state
     analysis_result = st.session_state.get("analysis_result")
     eval_running = st.session_state.get("eval_running", False)
 
     if transcript_text:
-        # ---------- AUTO-RUN once when we land here ----------
         if analysis_result is None and not eval_running:
             st.session_state["eval_running"] = True
             with st.spinner("Analyzing your explanation with the LLM..."):
@@ -112,17 +113,16 @@ with col2:
                         json={"transcript": transcript_text},
                         timeout=60,
                     )
-                    if resp.status_code != 200:
-                        st.error(f"Backend error {resp.status_code}: {resp.text}")
-                    else:
+                    if resp.status_code == 200:
                         analysis_result = resp.json()
                         st.session_state["analysis_result"] = analysis_result
+                    else:
+                        st.error(f"Backend error {resp.status_code}: {resp.text}")
                 except Exception as e:
                     st.error(f"Error calling analysis backend: {e}")
                 finally:
                     st.session_state["eval_running"] = False
 
-        # optional manual re-run
         if st.button("Re-run Evaluation"):
             with st.spinner("Re-running evaluation..."):
                 try:
@@ -131,29 +131,64 @@ with col2:
                         json={"transcript": transcript_text},
                         timeout=60,
                     )
-                    if resp.status_code != 200:
-                        st.error(f"Backend error {resp.status_code}: {resp.text}")
-                    else:
+                    if resp.status_code == 200:
                         analysis_result = resp.json()
                         st.session_state["analysis_result"] = analysis_result
+                    else:
+                        st.error(f"Backend error {resp.status_code}: {resp.text}")
                 except Exception as e:
                     st.error(f"Error calling analysis backend: {e}")
 
-        # ---------- display results ----------
         if analysis_result:
-            st.markdown("##### Predicted Category")
-            st.write(analysis_result.get("predicted_category", "unknown"))
-
-            st.markdown("##### Rubric Scores")
             score = analysis_result.get("score", {})
-            c1, c2, c3 = st.columns(3)
-            with c1:
-                st.metric("Problem Match", score.get("problem_id", 0))
-            with c2:
-                st.metric("Complexity", score.get("complexity", 0))
-            with c3:
-                st.metric("Clarity", score.get("clarity", 0))
+            overall_pct, overall_label, level_msg = compute_overall_score(score)
 
+            # ---------- Overall Score Badge ----------
+            badge_color = (
+                "#16a34a" if overall_pct >= 85
+                else "#eab308" if overall_pct >= 60
+                else "#ef4444"
+            )
+
+            st.markdown("##### Overall Score")
+            st.markdown(
+                f"""
+                <div style="
+                    padding:0.75rem 1rem;
+                    border-radius:0.75rem;
+                    background-color:rgba(148,163,184,0.08);
+                    border:1px solid rgba(148,163,184,0.4);
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:0.5rem;">
+                    <div>
+                        <div style="font-size:1.4rem;font-weight:700;">{overall_pct}%</div>
+                        <div style="font-size:0.9rem;color:#cbd5f5;">{overall_label}</div>
+                    </div>
+                    <div style="
+                        padding:0.35rem 0.75rem;
+                        border-radius:999px;
+                        background-color:{badge_color};
+                        color:white;
+                        font-size:0.8rem;
+                        font-weight:600;">
+                        Interview Readiness
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            st.caption(level_msg)
+
+            # ---------- Rubric Breakdown ----------
+            st.markdown("##### Rubric Breakdown")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Problem Match", score.get("problem_id", 0))
+            c2.metric("Complexity", score.get("complexity", 0))
+            c3.metric("Clarity", score.get("clarity", 0))
+
+            # ---------- Transcript Comments ----------
             st.markdown("##### Transcript Evaluation Comments")
             comments = analysis_result.get("comments", [])
             if comments:
@@ -162,8 +197,14 @@ with col2:
             else:
                 st.write("No comments returned by the model.")
 
+            # ---------- Overall Level ----------
             st.markdown("##### Overall Level")
             st.write(analysis_result.get("overall_level", "beginner"))
+
+            # ---------- 🎯 PERSONALIZED FEEDBACK MOVED HERE ----------
+            st.markdown("#### Personalized Feedback")
+            st.info(analysis_result.get("reasoning", "No detailed reasoning provided."))
+
         else:
             if not eval_running:
                 st.info("Evaluation will run automatically once a transcript is available.")
@@ -172,34 +213,11 @@ with col2:
 
 st.divider()
 
-# ----------------- PERSONALIZED FEEDBACK -----------------
-st.subheader("Personalized Feedback")
-analysis_result = st.session_state.get("analysis_result")
-if analysis_result:
-    st.markdown("Below is a summary of the model's feedback on your explanation.")
-    st.info(analysis_result.get("reasoning", "No detailed reasoning provided by the model."))
-else:
-    st.info("LLM feedback will appear here after the evaluation finishes.")
-
 # ----------------- NAVIGATION -----------------
-st.write("")
-st.divider()
 col1, spc, col2 = st.columns([1, 1, 1])
-
-practice_new_clicked = col1.button(
-    "Practice New",
-    key="practice_new_btn",
-    use_container_width=True,
-)
-dashboard_clicked = col2.button(
-    "Dashboard",
-    key="dashboard_btn",
-    use_container_width=True,
-)
-
-if practice_new_clicked:
+if col1.button("Practice New", use_container_width=True):
     st.switch_page("pages/select_criteria.py")
 
-if dashboard_clicked:
+if col2.button("Dashboard", use_container_width=True):
     st.session_state.page = "dashboard"
     st.switch_page("pages/dashboard.py")
