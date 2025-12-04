@@ -30,7 +30,7 @@ class LeetCodeManager:
                 lambda x: any(w in x for w in words)
             )
     
-    def get_problems_by_criteria(self, difficulty=None, algorithm_types=None, limit=None):
+    def get_problems_by_criteria(self, difficulty=None, algorithm_types=None, companies=None, limit=None):
         df = self.df.copy()
         
         if difficulty:
@@ -44,16 +44,35 @@ class LeetCodeManager:
                     mask |= df[col]
             df = df[mask] if isinstance(mask, pd.Series) else df
         
+        # Filter by companies
+        if companies:
+            def company_match(company_str):
+                if pd.isna(company_str):
+                    return False
+                company_list = [c.strip().lower() for c in str(company_str).split(',')]
+                return any(comp.lower() in company_list for comp in companies)
+            
+            df = df[df['companies'].apply(company_match)]
+        
         if limit:
             df = df.head(limit)
         
         problems = []
         for _, row in df.iterrows():
+            # Extract related topics for display
+            topics = row.get('related_topics', '')
+            if pd.notna(topics):
+                topics_list = [t.strip() for t in str(topics).split(',') if t.strip()]
+            else:
+                topics_list = []
+            
             problems.append({
                 'id': row.get('id', row.name),
                 'title': row.get('title', ''),
                 'difficulty': row.get('difficulty', 'medium'),
-                'question': row.get('description', row.get('title', ''))
+                'question': row.get('description', row.get('title', '')),
+                'topics': topics_list,  # Add topics to the problem dict
+                'companies': row.get('companies', '')
             })
         return problems
     
