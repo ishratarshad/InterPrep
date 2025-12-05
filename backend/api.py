@@ -240,72 +240,79 @@ def extract_json_safely(raw: str):
 # --------- Gemini-powered /analyze ---------
 
 def analyze_transcript(problem: str, code: str, transcript: str):
-# @app.post("/analyze", response_model=AnalyzeResponse)
-# def analyze(req: AnalyzeRequest):
-    # transcript = req.transcript
+    # @app.post("/analyze", response_model=AnalyzeResponse)
+    # def analyze(req: AnalyzeRequest):
+    #   return analyze_transcript(req.problem, req.code, req.transcript)
 
-    prompt = f"""
-You are a technical interviewer evaluating a candidate's explanation
-for a coding interview problem.
+    prompt = (
+     "You are evaluating a candidate's solution to a coding interview problem.\n\n"
+    "=== PROBLEM ===\n"
+    "{problem}\n\n"
+    "=== CANDIDATE CODE ===\n"
+    "{code}\n\n"
+    "=== TRANSCRIPT ===\n"
+    "{transcript}\n\n"
+    "=== RUBRIC ===\n"
+    f"{RUBRIC_TEXT}\n\n"
+    "CATEGORIES:\n"
+    f"{', '.join(CATEGORIES)}\n\n"
+    "Respond ONLY with valid JSON in this schema:\n"
+    "{{\n"
+    '  "predicted_category": "one category",\n'
+    '  "reasoning": "short justification",\n'
+    '  "is_solution_correct": true,\n'
+    '  "correctness_reasoning": "why the code is or is not correct",\n'
+    '  "confidence": 0.0,\n'
+    '  "score": {{\n'
+    '    "pattern_recognition": 0,\n'
+    '    "problem_understanding": 0,\n'
+    '    "approach_selection": 0,\n'
+    '    "time_complexity": 0,\n'
+    '    "space_complexity": 0,\n'
+    '    "case_analysis": 0,\n'
+    '    "structure_flow": 0,\n'
+    '    "technical_communication": 0,\n'
+    '    "completeness": 0,\n'
+    '    "bonus_penalty": 0,\n'
+    '    "total_raw": 0,\n'
+    '    "final_score": 0,\n'
+    '    "performance_level": "Poor"\n'
+    "  }},\n"
+    '  "comments": ["comment1", "comment2"],\n'
+    '  "overall_level": "beginner"\n'
+    "}}\n"
+).format(problem=problem, code=code, transcript=transcript)
 
-Here is the candidate's spoken explanation (transcript):
-
-\"\"\"{transcript}\"\"\"\n
-Use this rubric:
-
-{RUBRIC_TEXT}
-
-CATEGORIES (use exactly one of these):
-{", ".join(CATEGORIES)}
-
-Respond with ONLY valid JSON in this exact schema:
-
-{{
-    "predicted_category": "one_of_the_categories",
-    "reasoning": "short explanation",
-    "confidence": 0.0,
-    "score": {{
-        "problem_id": 1,
-        "complexity": 1,
-        "clarity": 1
-    }},
-    "comments": [
-        "comment 1",
-        "comment 2"
-    ],
-    "overall_level": "beginner"
-}}
-"""
     # ---- 1. Call Gemini ----
     try:
         result = gemini_model.generate_content(prompt)
         raw_text = result.text.strip()
     except Exception as e:
         fallback_score = Score(
-        pattern_recognition=0,
-        problem_understanding=0,
-        approach_selection=0,
-        time_complexity=0,
-        space_complexity=0,
-        case_analysis=0,
-        structure_flow=0,
-        technical_communication=0,
-        completeness=0,
-        bonus_penalty=0,
-        total_raw=0,
-        final_score=0.0,
-        performance_level="Poor"
-    )
-    return AnalyzeResponse(
-        predicted_category="unknown",
-        reasoning=f"Error contacting model: {repr(e)}",
-        is_solution_correct=False,
-        correctness_reasoning="Model unavailable.",
-        confidence=0.0,
-        score=fallback_score,
-        comments=["Backend model unavailable."],
-        overall_level="beginner",
-    )
+            pattern_recognition=0,
+            problem_understanding=0,
+            approach_selection=0,
+            time_complexity=0,
+            space_complexity=0,
+            case_analysis=0,
+            structure_flow=0,
+            technical_communication=0,
+            completeness=0,
+            bonus_penalty=0,
+            total_raw=0,
+            final_score=0.0,
+            performance_level="Poor"
+        )
+        return AnalyzeResponse (
+            predicted_category="unknown",
+            reasoning=f"Error contacting model: {repr(e)}",
+            is_solution_correct=False,
+            correctness_reasoning="Model unavailable.",
+            confidence=0.0,
+            score=fallback_score,
+            comments=["Backend model unavailable."],
+            overall_level="beginner",
+        )
 
     # ---- 2. Extract JSON robustly ----
     data = extract_json_safely(raw_text)
@@ -314,8 +321,10 @@ Respond with ONLY valid JSON in this exact schema:
         data = {
             "predicted_category": "unknown",
             "reasoning": "Your explanation could not be evaluated. Try re-recording with a clear problem statement, approach, and complexity.",
+            "is_solution_correct": False,
+            "correctness_reasoning": "Invalid or unparsable model output.",
             "confidence": 0.0,
-            "score": {"problem_id": 1, "complexity": 1, "clarity": 1},
+            "score": {},
             "comments": [
                 "State the exact goal of the problem.",
                 "Walk through your algorithm step-by-step.",
