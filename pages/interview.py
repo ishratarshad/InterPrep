@@ -31,6 +31,10 @@ st.header("Interview Question")
 filtered_questions = st.session_state.get("filtered_questions", [])
 if not filtered_questions:
     st.warning("Select appropriate criteria.")
+    spc1, col, spc2 = st.columns([1, 1, 1])
+    if col.button("Select Criteria", key="practice_new_btn", use_container_width=True):
+        st.switch_page("pages/select_criteria.py")
+    st.stop()
 
 if st.session_state.get("current_question") is None and filtered_questions:
     st.session_state.current_question = random.choice(filtered_questions)
