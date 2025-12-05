@@ -54,8 +54,8 @@ with col2:
 st.divider()
 
 # ------------- HELPER: COMPUTE OVERALL SCORE -------------
-def compute_overall_score(score_dict: dict):
-    vals = [score_dict.get(k, 0) for k in ["problem_id", "complexity", "clarity"]]
+def compute_overall_score(score):
+    vals = [getattr(score, k, 0) for k in ["problem_id", "complexity", "clarity"]]
     if not vals:
         return None, "No score", "No rubric scores were returned."
 
@@ -70,8 +70,8 @@ def compute_overall_score(score_dict: dict):
         label = "On Track"
         msg = "You’re on a good path. Some areas need tightening, but the core understanding is there."
     else:
-        label = "Needs Work"
-        msg = "There are gaps in the explanation. Use the rubric below to see what to improve next."
+        label = "Needs Improvement"
+        msg = "Focus on fundamentals and clarity. Use the rubric to see what to improve in your explanation."
 
     return overall_pct, label, msg
 
