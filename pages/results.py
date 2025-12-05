@@ -111,15 +111,8 @@ with col2:
 
         if st.button("Re-run Evaluation"):
             with st.spinner("Re-running evaluation..."):
-                resp = requests.post(backend_url, json={"transcript": transcript_text}, timeout=60)
-                if resp.status_code == 200:
-                    try:
-                        analysis_result = resp.json()
-                        st.session_state["analysis_result"] = analysis_result
-                    except requests.exceptions.JSONDecodeError:
-                        st.error("Failed to decode JSON response. Response text: " + resp.text)
-                else:
-                    st.error(f"Backend error {resp.status_code}: {resp.text}")
+                analysis_result = analyze_transcript(transcript_text)
+                st.session_state["analysis_result"] = analysis_result
 
         if analysis_result:
             score = analysis_result.get("score", {})
