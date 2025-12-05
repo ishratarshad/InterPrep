@@ -125,7 +125,7 @@ st.dataframe(plan_table, hide_index=True)
 
 # SAMPLE ADDITIONAL PROBLEMS
 st.divider()
-st.markdown(f"### Sample Practice: {len(filtered.groupby('related_topics'))} problems")
+st.markdown(f"### Sample Practice: {len(filtered.groupby('related_topics'))} sets")
 
 st.markdown("""
     - Add 1-2 **Medium-Hard** problems in each topic for stretch practice if you finish all core topics. 
