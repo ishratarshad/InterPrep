@@ -1,3 +1,4 @@
+import streamlit as st
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
@@ -13,7 +14,8 @@ app = FastAPI(
 )
 
 # --------- Gemini setup ---------
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+
 if not GEMINI_API_KEY:
     raise RuntimeError("GEMINI_API_KEY is not set in environment variables.")
 

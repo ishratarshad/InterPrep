@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
 venv/
-.streamlit/secrets.toml
+secrets.toml
 code/
 audio/
 transcript/
