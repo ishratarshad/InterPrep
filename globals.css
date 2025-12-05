@@ -8,13 +8,13 @@
     margin-top: 1.2rem !important;
 }
 
-body, p, h4, h5, h6, ul, li {
-    font-family: 'Ubuntu Sans', monospace !important;
-}
-
 /* div.stButton > button {
     font-family: 'Chakra Petch', sans-serif !important;
 } */
+
+body, p, h4, h5, h6, ul, li {
+    font-family: 'Fira Code', monospace !important;
+}
 
 h1#inter-prep {
     font-family: 'Nova Mono', monospace !important;
