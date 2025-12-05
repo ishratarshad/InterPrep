@@ -357,7 +357,7 @@ def analyze_transcript(problem: str, code: str, transcript: str):
         bonus
     )
 
-    final_score = max(0, min(100, (total_raw / 110) * 100))
+    final_score = round(max(0, min(100, (total_raw / 110) * 100)))
 
     if final_score >= 90:
         level = "Excellent"
