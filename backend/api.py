@@ -58,6 +58,8 @@ class Score(BaseModel):
 class AnalyzeResponse(BaseModel):
     predicted_category: str
     reasoning: str
+    is_solution_correct: bool
+    correctness_reasoning: str
     confidence: float
     score: Score
     comments: List[str]
@@ -237,7 +239,7 @@ def extract_json_safely(raw: str):
 
 # --------- Gemini-powered /analyze ---------
 
-def analyze_transcript(transcript: str):
+def analyze_transcript(problem: str, code: str, transcript: str):
 # @app.post("/analyze", response_model=AnalyzeResponse)
 # def analyze(req: AnalyzeRequest):
     # transcript = req.transcript
@@ -279,20 +281,35 @@ Respond with ONLY valid JSON in this exact schema:
         result = gemini_model.generate_content(prompt)
         raw_text = result.text.strip()
     except Exception as e:
-        score = Score(problem_id=1, complexity=1, clarity=1)
-        return AnalyzeResponse(
-            predicted_category="unknown",
-            reasoning=f"Error contacting model: {repr(e)}",
-            confidence=0.0,
-            score=score,
-            comments=["Backend model unavailable. Try again later."],
-            overall_level="beginner",
-        )
+        fallback_score = Score(
+        pattern_recognition=0,
+        problem_understanding=0,
+        approach_selection=0,
+        time_complexity=0,
+        space_complexity=0,
+        case_analysis=0,
+        structure_flow=0,
+        technical_communication=0,
+        completeness=0,
+        bonus_penalty=0,
+        total_raw=0,
+        final_score=0.0,
+        performance_level="Poor"
+    )
+    return AnalyzeResponse(
+        predicted_category="unknown",
+        reasoning=f"Error contacting model: {repr(e)}",
+        is_solution_correct=False,
+        correctness_reasoning="Model unavailable.",
+        confidence=0.0,
+        score=fallback_score,
+        comments=["Backend model unavailable."],
+        overall_level="beginner",
+    )
 
     # ---- 2. Extract JSON robustly ----
     data = extract_json_safely(raw_text)
-
-    # ---- 3. Fallback if JSON invalid ----
+    
     if data is None:
         data = {
             "predicted_category": "unknown",
@@ -306,35 +323,33 @@ Respond with ONLY valid JSON in this exact schema:
             ],
             "overall_level": "beginner",
         }
+    # ---- 3. Score extraction ----
+    s = data.get("score", {})
 
-    # ---- 4. Convert Score safely ----
-    score_obj = data.get("score", {})
-    pattern = int(score_obj.get("pattern_recognition", 0))
-    understanding = int(score_obj.get("problem_understanding", 0))
-    approach = int(score_obj.get("approach_selection", 0))
+    # Raw values
+    pattern = int(s.get("pattern_recognition", 0))
+    understand = int(s.get("problem_understanding", 0))
+    approach = int(s.get("approach_selection", 0))
 
-    time_c = int(score_obj.get("time_complexity", 0))
-    space_c = int(score_obj.get("space_complexity", 0))
-    case = int(score_obj.get("case_analysis", 0))
+    time_c = int(s.get("time_complexity", 0))
+    space_c = int(s.get("space_complexity", 0))
+    case_c = int(s.get("case_analysis", 0))
 
-    struct = int(score_obj.get("structure_flow", 0))
-    tech = int(score_obj.get("technical_communication", 0))
-    complete = int(score_obj.get("completeness", 0))
+    flow = int(s.get("structure_flow", 0))
+    tech = int(s.get("technical_communication", 0))
+    complete = int(s.get("completeness", 0))
 
-    bonus = int(score_obj.get("bonus_penalty", 0))
+    bonus = int(s.get("bonus_penalty", 0))
 
-# Compute totals
     total_raw = (
-        pattern + understanding + approach +
-        time_c + space_c + case +
-        struct + tech + complete +
+        pattern + understand + approach +
+        time_c + space_c + case_c +
+        flow + tech + complete +
         bonus
-)
+    )
 
-# scale to 0–100
     final_score = max(0, min(100, (total_raw / 110) * 100))
 
-# performance level
     if final_score >= 90:
         level = "Excellent"
     elif final_score >= 75:
@@ -348,27 +363,29 @@ Respond with ONLY valid JSON in this exact schema:
 
     score = Score(
         pattern_recognition=pattern,
-        problem_understanding=understanding,
+        problem_understanding=understand,
         approach_selection=approach,
         time_complexity=time_c,
         space_complexity=space_c,
-        case_analysis=case,
-        structure_flow=struct,
+        case_analysis=case_c,
+        structure_flow=flow,
         technical_communication=tech,
         completeness=complete,
         bonus_penalty=bonus,
         total_raw=total_raw,
         final_score=final_score,
         performance_level=level
-)
-    
+    )
 
-    # ---- 5. Return structured response ----
+    # ---- 4. Convert Score safely ----
     return AnalyzeResponse(
-        predicted_category=str(data.get("predicted_category", "unknown")),
-        reasoning=str(data.get("reasoning", "")),
+        predicted_category=data.get("predicted_category", "unknown"),
+        reasoning=data.get("reasoning", ""),
+        is_solution_correct=data.get("is_solution_correct", False),
+        correctness_reasoning=data.get("correctness_reasoning", ""),
         confidence=float(data.get("confidence", 0.0)),
         score=score,
         comments=[str(c) for c in data.get("comments", [])],
-        overall_level=str(data.get("overall_level", "beginner")),
+        overall_level=data.get("overall_level", "beginner"),
     )
+  
