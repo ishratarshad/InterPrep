@@ -76,10 +76,10 @@ def compute_overall_score(score):
     return overall_pct, label, msg
 
 # ----------------- SCORING & RUBRIC TEXT -----------------
-st.subheader("Scoring & Evaluation")
-col1, col2 = st.columns([1, 1])
+col1, spc, col2 = st.columns([1, 0.1, 1])
 
 with col1:
+    st.subheader("Scoring Criteria")
     for fname, title in [
         ("1_problem_identification.md", "#1 Problem Identification"),
         ("2_complexity_analysis.md", "#2 Complexity Analysis"),
@@ -96,7 +96,7 @@ with col1:
 
 # ----------------- LLM SCORING PANEL -----------------
 with col2:
-    st.markdown("#### LLM-Based Evaluation")
+    st.subheader("Transcript Evaluation")
     backend_url = "https://interprep-code.streamlit.app/analyze"
     analysis_result = st.session_state.get("analysis_result")
     eval_running = st.session_state.get("eval_running", False)
@@ -104,7 +104,7 @@ with col2:
     if transcript_text:
         if analysis_result is None and not eval_running:
             st.session_state["eval_running"] = True
-            with st.spinner("Analyzing your explanation with the LLM..."):
+            with st.spinner("Analyzing your explanation with Gemini..."):
                 analysis_result = analyze_transcript(transcript_text)
                 st.session_state["analysis_result"] = analysis_result
             st.session_state["eval_running"] = False
@@ -118,225 +118,294 @@ with col2:
             score = analysis_result.score
             overall_pct, overall_label, level_msg = compute_overall_score(score)
 
-            # ---------- SCORE BADGE ----------
+            # ---------- OVERALL LEVEL & SCORE ----------
+            st.write("")
+            st.markdown("#### Overall Level & Score")
+
+            level = getattr(analysis_result, "overall_level", "beginner").title()
             badge_color = "#16a34a" if overall_pct >= 85 else "#eab308" if overall_pct >= 60 else "#ef4444"
-            st.markdown("##### Overall Score")
+
             st.markdown(
                 f"""
-                <div style="padding:0.75rem 1rem;border-radius:0.75rem;background-color:rgba(148,163,184,0.08);
-                border:1px solid rgba(148,163,184,0.4);display:flex;justify-content:space-between;">
-                    <div>
-                        <div style="font-size:1.4rem;font-weight:700;">{overall_pct}%</div>
-                        <div style="font-size:0.9rem;color:#cbd5f5;">{overall_label}</div>
+                <div style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    gap: 1rem;
+                    padding: 1rem;
+                    border-radius: 0.75rem;
+                    background-color: #E9F5ED;
+                    border: 1px solid #D0E9D4;
+                    box-shadow: 0 1px 3px rgba(46, 125, 50, 0.1);
+                    margin-bottom: 1rem;
+                ">
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.9rem; color: #212529; font-weight: 600;">Level</div>
+                        <div style="font-size: 1.1rem; color: {badge_color};">{level}</div>
                     </div>
-                    <div style="padding:0.35rem 0.75rem;border-radius:999px;background-color:{badge_color};
-                    color:white;font-size:0.8rem;font-weight:600;">Interview Readiness</div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.9rem; color: #212529; font-weight: 600;">Score</div>
+                        <div style="font-size: 1.1rem; color: {badge_color};">{overall_pct}%</div>
+                    </div>
+                    <div style="grid-row: span 2; display: flex; align-items: center; justify-content: center;">
+                        <div style="
+                            padding: 0.4rem 0.8rem;
+                            border-radius: 999px;
+                            background-color: {badge_color};
+                            color: white;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            text-align: center;
+                        ">
+                            {overall_label}
+                        </div>
+                    </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
-            st.caption(level_msg)
+
 
             # ---------- BREAKDOWN ----------
-            st.markdown("##### Rubric Breakdown")
+            st.write("")
+            st.markdown("#### Score Breakdown")
+            st.markdown(
+                """
+                <style>
+                .metric-container {
+                    display: flex;
+                    justify-content: space-around;
+                    margin-bottom: 1rem;
+                }
+                .metric {
+                    text-align: center;
+                    background-color: #E9F5ED;
+                    border: 1px solid #D0E9D4;
+                    border-radius: 0.5rem;
+                    padding: 0.75rem;
+                    box-shadow: 0 1px 3px rgba(46, 125, 50, 0.1);
+                }
+                .metric-label {
+                    font-size: 0.9rem;
+                    color: #212529;
+                    margin-bottom: 0.5rem;
+                }
+                .metric-value {
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    color: #2E7D32;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True,
+            )
+
             c1, c2, c3 = st.columns(3)
-            c1.metric("Problem Match", score.problem_id)
-            c2.metric("Complexity", score.complexity)
-            c3.metric("Clarity", score.clarity)
+            with c1:
+                st.markdown('<div class="metric"><div class="metric-label">Problem Match</div><div class="metric-value">{}/3</div></div>'.format(score.problem_id), unsafe_allow_html=True)
+            with c2:
+                st.markdown('<div class="metric"><div class="metric-label">Complexity</div><div class="metric-value">{}/3</div></div>'.format(score.complexity), unsafe_allow_html=True)
+            with c3:
+                st.markdown('<div class="metric"><div class="metric-label">Clarity</div><div class="metric-value">{}/3</div></div>'.format(score.clarity), unsafe_allow_html=True)
 
-            st.markdown("##### Transcript Evaluation Comments")
-            for comment in analysis_result.comments:
-                st.write(f"- {comment}")
 
-            st.markdown("##### Overall Level")
-            st.write(getattr(analysis_result, "overall_level", "beginner"))
+            st.write("")
+            st.info(level_msg)
+            st.write("")
+
 
             # ---------- PERSONALIZED FEEDBACK ----------
             st.markdown("#### Personalized Feedback")
-            st.write(getattr(analysis_result, "reasoning", "No detailed reasoning provided."))
+            reasoning = getattr(analysis_result, "reasoning", "No detailed reasoning provided.")
+            st.markdown(f"<div style='padding:0.75rem; background-color:#E9F5ED; border:1px solid #D0E9D4; border-radius:0.375rem; margin-bottom:1rem;'>{reasoning}</div>", unsafe_allow_html=True)
+
+            # st.markdown("#### Comments")
+            for comment in analysis_result.comments:
+                st.markdown(f"<div style='margin:0.25rem 0; padding:0.5rem; background-color:#E9F5ED; border:1px solid #D0E9D4; border-radius:0.375rem;'>{comment}</div>", unsafe_allow_html=True)
 
             # ---------- 🎯 LESSON PLAN SECTION ----------
-            st.subheader("How To Improve (Lesson Plan)")
+            st.write("")
+            st.write("")
+            st.markdown("#### How To Improve")
 
             LESSON_PLANS = {
                 "arrays": """
 Arrays rely on efficient scanning, prefix computation, and index manipulation.
 
-Core Concepts
+**Core Concepts**
 - Prefix and suffix arrays
 - Two-pass scans and amortized O(n) reasoning
 - Trade-offs of in-place updates vs auxiliary space
 
-Recommended Problems
+**Recommended Problems**
 - 53 Maximum Subarray
 - 238 Product of Array Except Self
 - 121 Best Time to Buy and Sell Stock
 
-What to Practice Next
+**What to Practice Next**
 - Explain how iteration patterns eliminate nested loops.
 - Show how prefix or suffix logic reduces repeated computation.
 """,
                 "hashmap": """
 Hash-based solutions optimize constant-time lookups and avoid redundant scans.
 
-Core Concepts
+**Core Concepts**
 - Key/value design and frequency counting
 - Avoiding O(n²) double loops using sets and maps
 - Understanding collisions conceptually
 
-Recommended Problems
+**Recommended Problems**
 - 1 Two Sum
 - 49 Group Anagrams
 - 560 Subarray Sum Equals K
 
-What to Practice Next
+**What to Practice Next**
 - Practice stating how you reduce a brute-force approach to O(n) by storing decisions already made.
 """,
                 "two_pointers": """
 Two pointers solve problems on sorted or directionally constrained data.
 
-Core Concepts
+**Core Concepts**
 - Shrinking ranges by moving boundary pointers
 - Leveraging sorted structure to avoid rescans
 - Identifying when movement is optimal
 
-Recommended Problems
+**Recommended Problems**
 - 11 Container With Most Water
 - 15 3Sum
 - 167 Two Sum II
 
-What to Practice Next
+**What to Practice Next**
 - Describe pointer movement decisions clearly.
 - Justify why each pointer move is safe and optimal.
 """,
                 "sliding_window": """
 Sliding windows track a moving subset of elements under a constraint.
 
-Core Concepts
+**Core Concepts**
 - Left/right boundary management
 - Maintaining validity while expanding and contracting
 - Understanding O(n) amortized work
 
-Recommended Problems
+**Recommended Problems**
 - 3 Longest Substring Without Repeating Characters
 - 76 Minimum Window Substring
 - 209 Minimum Size Subarray Sum
 
-What to Practice Next
+**What to Practice Next**
 - Explain how you maintain window state and when you shrink to restore constraints.
 """,
                 "binary_search": """
 Binary search works when answers or states follow a monotonic pattern.
 
-Core Concepts
+**Core Concepts**
 - Midpoint choice and boundary updates
 - Checking invariant correctness
 - Using search on answers, not only arrays
 
-Recommended Problems
+**Recommended Problems**
 - 704 Binary Search
 - 33 Search in Rotated Sorted Array
 - 875 Koko Eating Bananas
 
-What to Practice Next
+**What to Practice Next**
 - Avoid vague terms like "cut in half"; explain exact boundary logic.
 - Emphasize termination conditions and off-by-one safety.
 """,
                 "linked_list": """
 Linked lists amplify pointer reasoning and structural manipulation.
 
-Core Concepts
+**Core Concepts**
 - Maintaining prev, curr, next references
 - Dummy node usage to simplify edges
 - Tortoise-and-hare cycle detection
 
-Recommended Problems
+**Recommended Problems**
 - 206 Reverse Linked List
 - 141 Linked List Cycle
 - 19 Remove Nth Node From End
 
-What to Practice Next
+**What to Practice Next**
 - Say your pointers out loud; practice describing how they move and why.
 """,
                 "tree": """
 Trees demand recursive reasoning and traversal clarity.
 
-Core Concepts
+**Core Concepts**
 - DFS orderings (pre/in/post)
 - Levels and BFS when breadth matters
 - Height and balance implications
 
-Recommended Problems
+**Recommended Problems**
 - 104 Maximum Depth of Binary Tree
 - 226 Invert Binary Tree
 - 230 Kth Smallest Element in BST
 
-What to Practice Next
+**What to Practice Next**
 - Describe the recursive frame: what you pass down, what you compute, and what you return.
 """,
                 "graph": """
 Graph problems combine traversal discipline with state tracking.
 
-Core Concepts
+**Core Concepts**
 - Adjacency list modeling
 - Visited sets to prevent cycles
 - Topological ordering when direction matters
 
-Recommended Problems
+**Recommended Problems**
 - 200 Number of Islands
 - 133 Clone Graph
 - 207 Course Schedule
 
-What to Practice Next
+**What to Practice Next**
 - Be explicit about visited states and direction; ambiguity loses points fast.
 """,
                 "heap": """
 Heaps optimize ordered retrieval without full sorting.
 
-Core Concepts
+**Core Concepts**
 - Partial ordering and priority queues
 - O(log n) push/pop mechanics
 - Using heaps on fixed-size windows
 
-Recommended Problems
+**Recommended Problems**
 - 215 Kth Largest Element in an Array
 - 347 Top K Frequent Elements
 - 295 Find Median From Data Stream
 
-What to Practice Next
+**What to Practice Next**
 - Practice explaining when heap usage beats sorting and what "partial order" buys you.
 """,
                 "dp": """
 Dynamic programming turns exponential recursion into linear or near-linear progression.
 
-Core Concepts
+**Core Concepts**
 - State definition: what dp[i] represents
 - Transitions based on previous states
 - Memoization vs tabulation tradeoffs
 
-Recommended Problems
+**Recommended Problems**
 - 70 Climbing Stairs
 - 198 House Robber
 - 300 Longest Increasing Subsequence
 
-What to Practice Next
+**What to Practice Next**
 - Always state the recurrence before presenting the solution; that alone boosts clarity scores.
 - Briefly compare your DP approach to the brute-force recursive version and explain what work you are saving.
 """,
                 "backtracking": """
 Backtracking explores choices, recurses, and undoes invalid paths.
 
-Core Concepts
+**Core Concepts**
 - Base case specification
 - State variables carried through recursion
 - Exponential branching and pruning
 
-Recommended Problems
+**Recommended Problems**
 - 46 Permutations
 - 39 Combination Sum
 - 51 N-Queens
 
-What to Practice Next
+**What to Practice Next**
 - Explain what each parameter tracks, how you revert choices, and why runtime is exponential.
 """
             }
