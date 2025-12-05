@@ -309,11 +309,59 @@ Respond with ONLY valid JSON in this exact schema:
 
     # ---- 4. Convert Score safely ----
     score_obj = data.get("score", {})
+    pattern = int(score_obj.get("pattern_recognition", 0))
+    understanding = int(score_obj.get("problem_understanding", 0))
+    approach = int(score_obj.get("approach_selection", 0))
+
+    time_c = int(score_obj.get("time_complexity", 0))
+    space_c = int(score_obj.get("space_complexity", 0))
+    case = int(score_obj.get("case_analysis", 0))
+
+    struct = int(score_obj.get("structure_flow", 0))
+    tech = int(score_obj.get("technical_communication", 0))
+    complete = int(score_obj.get("completeness", 0))
+
+    bonus = int(score_obj.get("bonus_penalty", 0))
+
+# Compute totals
+    total_raw = (
+        pattern + understanding + approach +
+        time_c + space_c + case +
+        struct + tech + complete +
+        bonus
+)
+
+# scale to 0–100
+    final_score = max(0, min(100, (total_raw / 110) * 100))
+
+# performance level
+    if final_score >= 90:
+        level = "Excellent"
+    elif final_score >= 75:
+        level = "Good"
+    elif final_score >= 60:
+        level = "Satisfactory"
+    elif final_score >= 40:
+        level = "Needs Improvement"
+    else:
+        level = "Poor"
+
     score = Score(
-        problem_id=int(score_obj.get("problem_id", 1)),
-        complexity=int(score_obj.get("complexity", 1)),
-        clarity=int(score_obj.get("clarity", 1)),
-    )
+        pattern_recognition=pattern,
+        problem_understanding=understanding,
+        approach_selection=approach,
+        time_complexity=time_c,
+        space_complexity=space_c,
+        case_analysis=case,
+        structure_flow=struct,
+        technical_communication=tech,
+        completeness=complete,
+        bonus_penalty=bonus,
+        total_raw=total_raw,
+        final_score=final_score,
+        performance_level=level
+)
+    
 
     # ---- 5. Return structured response ----
     return AnalyzeResponse(
