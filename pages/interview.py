@@ -6,6 +6,7 @@ import os
 import time
 import globals
 from backend.transcription import TranscriptionService
+from st_audiorec import st_audiorec
 
 # Page config & styles
 st.set_page_config(page_title="Practice", layout="wide")
@@ -158,6 +159,20 @@ with col1:
 # ==========================
 # AUDIO RECORDING + WHISPER
 # ==========================
+if "transcript" not in st.session_state:
+    st.session_state.transcript = None
+if "audio_file" not in st.session_state:
+    st.session_state.audio_file = None
+
+# suggested audio times (sec) for recordings
+suggested_times = {
+    'easy': 15 * 60,
+    'medium': 30 * 60,
+    'hard': 60 * 60
+}
+
+diff = current_q.get('difficulty', 'medium').lower()
+suggested_time = suggested_times.get(diff, 30 * 60)
 
 # Cache whisper model
 @st.cache_resource
@@ -166,46 +181,66 @@ def load_transcription():
 
 with col2:
     status = st.status(f":orange[Record & Respond to the Following:]", expanded=False)
+
+    # AUDIO-TRANSCRIPT QUESTIONS
     with open("evaluation/rubric_mini.md", "r", encoding="utf-8") as f:
         md_content = f.read()
-    st.markdown(md_content)
-    audio = st.audio_input("Record your explanation")
 
-    if audio:
-        os.makedirs("audio", exist_ok=True)
-        filename = "audio/user_recorded.wav"
+    sections = md_content.split("##### ")
+    for i, section in enumerate(sections[1:]):
+        lines = section.strip().split("\n")
+        heading = lines[0].strip()
+        content = "\n".join(lines[1:]).strip()
+        
+        with st.expander(f"**{heading}**", expanded=(i == 0)):
+            st.markdown(content)
 
-        with open(filename, "wb") as f:
-            f.write(audio.getbuffer())
+    st.divider()
+    st.markdown(f"Suggested time ({difficulty_color.get(diff, '⚪')} **{diff.title()}**): {suggested_time // 60} mins")
 
-        status.update(label="Audio saved!", state="complete")
+    wav_audio_data = st_audiorec()
 
-        with st.spinner("Transcribing..."):
+    if wav_audio_data is not None:
+            status.update(label=f":green[Record & Respond to the Following:]", state="complete")
+            # new expander
+            status = st.status("**Processing Audio...**", expanded=True)            
+            os.makedirs("audio", exist_ok=True)
+            filename = "audio/user_recorded.wav"
+            
             try:
+                with open(filename, "wb") as f:
+                    f.write(wav_audio_data)
+                with status:
+                    st.success("✅ Audio saved!")
+                
+                status.update(label="**Transcribing...**", expanded=True)
                 service = load_transcription()
                 transcript = service.transcribe(filename)
 
                 if transcript:
                     st.session_state.transcript = transcript
                     st.session_state.audio_file = filename
-
-                    st.success("✅ Transcribed!")
-
-                    # Save transcript
+                    
+                    # Save Transcript
                     os.makedirs("transcript", exist_ok=True)
                     with open("transcript/transcript.txt", "w", encoding="utf-8") as f:
                         f.write(transcript)
 
+                    status.update(label="**Transcription Complete!**", state="complete", expanded=True)
+                    
                     # Preview
-                    with st.expander("Transcript Preview", expanded=True):
+                    with status:
+                        st.success("✅ Transcribed!")
                         st.write(transcript)
                         st.caption(f"{len(transcript.split())} words")
 
                 else:
+                    status.update(label="**Transcription Failed.**", state="error")
                     st.error("Transcription returned empty text.")
 
             except Exception as e:
-                st.error(f"Error: {e}")
+                status.update(label="**An Error Occurred.**", state="error")
+                st.error(f"Error during file operations or transcription: {e}")
 
 
 # ---------------------------------
