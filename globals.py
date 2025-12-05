@@ -6,9 +6,9 @@ def load_global_styles(css_file: str = "globals.css"):
         st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 primaryColor = "#2E7D32"
-backgroundColor = "#FBFBF9"
+backgroundColor = "#F8F9FA"
 textColor = "#2E2E2E"
-borderColor = "#F4C2C2"
+borderColor = "#D0E9D4"
 linkColor = "#388E3C"
 buttonBgColor = "#A1E7A7"
 buttonHoverColor = "#3ECC4D"

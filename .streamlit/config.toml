@@ -8,16 +8,16 @@ base = "light"
 primaryColor = "#2E7D32"
 
 # main background
-backgroundColor = "#FBFBF9"
+backgroundColor = "#F8F9FA"
 
 # sidebar background
-secondaryBackgroundColor = "#DCE7E4"
+secondaryBackgroundColor = "#E9F5ED"
 
 # text color -- generic, readable
 textColor = "#2E2E2E"
 
 # border color --for inputs, cards
-borderColor = "#F4C2C2"
+borderColor = "#D0E9D4"
 
 # link color
 linkColor = "#388E3C"
