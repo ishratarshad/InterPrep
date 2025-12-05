@@ -3,6 +3,7 @@ import shared.navbar as navbar_module
 import globals
 import os
 import requests  # for calling the FastAPI backend
+from backend.api import analyze_transcript
 
 st.set_page_config(page_title="Results", layout="wide")
 globals.load_global_styles("globals.css")
@@ -104,15 +105,9 @@ with col2:
         if analysis_result is None and not eval_running:
             st.session_state["eval_running"] = True
             with st.spinner("Analyzing your explanation with the LLM..."):
-                try:
-                    resp = requests.post(backend_url, json={"transcript": transcript_text}, timeout=60)
-                    if resp.status_code == 200:
-                        analysis_result = resp.json()
-                        st.session_state["analysis_result"] = analysis_result
-                    else:
-                        st.error(f"Backend error {resp.status_code}: {resp.text}")
-                finally:
-                    st.session_state["eval_running"] = False
+                analysis_result = analyze_transcript(transcript_text)
+                st.session_state["analysis_result"] = analysis_result
+            st.session_state["eval_running"] = False
 
         if st.button("Re-run Evaluation"):
             with st.spinner("Re-running evaluation..."):
