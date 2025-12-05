@@ -29,9 +29,28 @@ class AnalyzeRequest(BaseModel):
 
 
 class Score(BaseModel):
-    problem_id: int
-    complexity: int
-    clarity: int
+    # Problem Identification (35 pts)
+    pattern_recognition: int          
+    problem_understanding: int       
+    approach_selection: int          
+
+    # Complexity Analysis (35 pts)
+    time_complexity: int              
+    space_complexity: int             
+    case_analysis: int                
+
+    # Clarity / Explanation (30 pts)
+    structure_flow: int               
+    technical_communication: int      
+    completeness: int                
+
+    # Bonus / Penalty 
+    bonus_penalty: int               
+
+    # Final Grade 
+    total_raw: int                    
+    final_score: float                
+    performance_level: str            
 
 
 class AnalyzeResponse(BaseModel):
