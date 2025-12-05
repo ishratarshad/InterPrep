@@ -96,7 +96,7 @@ with col1:
 # ----------------- LLM SCORING PANEL -----------------
 with col2:
     st.markdown("#### LLM-Based Evaluation")
-    backend_url = "http://127.0.0.1:8000/analyze"
+    backend_url = "https://interprep-code.streamlit.app/analyze"
     analysis_result = st.session_state.get("analysis_result")
     eval_running = st.session_state.get("eval_running", False)
 
