@@ -6,13 +6,6 @@ import os
 import json
 import google.generativeai as genai
 
-# # --------- FastAPI app ---------
-# app = FastAPI(
-#     title="InterPrep Backend",
-#     description="ASR + Analysis backend for InterPrep",
-#     version="0.1.0",
-# )
-
 # --------- Gemini setup ---------
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
@@ -23,7 +16,6 @@ genai.configure(api_key=GEMINI_API_KEY)
 gemini_model = genai.GenerativeModel("gemini-flash-latest")
 
 # --------- Models & Rubric ---------
-
 class AnalyzeRequest(BaseModel):
     transcript: str
 
@@ -144,10 +136,6 @@ def extract_json_safely(raw: str):
 # --------- Gemini-powered /analyze ---------
 
 def analyze_transcript(transcript: str):
-# @app.post("/analyze", response_model=AnalyzeResponse)
-# def analyze(req: AnalyzeRequest):
-    # transcript = req.transcript
-
     prompt = f"""
 You are a technical interviewer evaluating a candidate's explanation
 for a coding interview problem.

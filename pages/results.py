@@ -2,7 +2,6 @@ import streamlit as st
 import shared.navbar as navbar_module
 import globals
 import os
-# import requests  # for calling the FastAPI backend
 from backend.api import analyze_transcript
 from backend.lesson_plans import LESSON_PLANS
 

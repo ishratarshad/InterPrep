@@ -176,7 +176,8 @@ suggested_times = {
 }
 
 diff = current_q.get('difficulty', 'medium').lower()
-suggested_time = suggested_times.get(diff, 30 * 60)
+suggested_time_sec = suggested_times.get(diff, 30 * 60)
+suggested_time_min = suggested_time_sec // 60
 
 # Cache whisper model
 @st.cache_resource
@@ -200,7 +201,7 @@ with col2:
             st.markdown(content)
 
     st.divider()
-    st.markdown(f"Suggested time ({difficulty_color.get(diff, '⚪')} **{diff.title()}**): {suggested_time // 60} mins")
+    st.markdown(f"⏳ **Suggested Time** ({difficulty_color.get(diff, '⚪')} **{diff.title()}**): {suggested_time_min} mins")
 
     wav_audio_data = st_audiorec()
 
