@@ -17,6 +17,7 @@ if "page" not in st.session_state:
 # Navigation setup
 pages = {
     "About": "about",
+    "Rubric": "rubric",
     "Practice": "select_criteria",
     "Dashboard": "dashboard"
 }
@@ -56,11 +57,13 @@ if filtered_questions:
     
     # Display companies if available
     companies = current_q.get('companies', '')
-    if companies:
+    if isinstance(companies, str) and companies:
         company_list = [c.strip() for c in companies.split(',') if c.strip()]
         if company_list:
             st.markdown(f"**Asked by:** {', '.join(company_list[:5])}")
-    
+    else:
+        company_list = []
+
     st.divider()
     st.markdown("#### Problem Description:")
     st.write(current_q["question"])
