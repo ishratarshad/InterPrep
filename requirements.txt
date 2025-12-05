@@ -21,7 +21,7 @@ torchaudio
 nltk
 
 # Audio recording
-st_audiorec
+streamlit-audiorec
 
 # Audio Processing (Whisper integration)
 faster-whisper
