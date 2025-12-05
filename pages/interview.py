@@ -1,6 +1,5 @@
 import streamlit as st
 import shared.navbar as navbar_module
-from streamlit_ace import st_ace
 import random
 import os
 import time
@@ -58,7 +57,7 @@ if filtered_questions:
     # Display topics/categories
     topics = current_q.get('topics', [])
     if topics:
-        st.markdown(f"**Topics:** {', '.join(topics[:5])}")  # Show first 5 topics
+        st.markdown(f"**Topics:** {', '.join(topics[:5])}")
     
     # Display companies if available
     companies = current_q.get('companies', '')
@@ -66,43 +65,23 @@ if filtered_questions:
         company_list = [c.strip() for c in companies.split(',') if c.strip()]
         if company_list:
             st.markdown(f"**Asked by:** {', '.join(company_list[:5])}")
-    else:
-        company_list = []
 
     st.divider()
     st.markdown("#### Problem Description:")
     st.write(current_q["question"])
 
 # ---------------------------------
-# ACE Editor Session Management
+# Code Editor Session Management
 # ---------------------------------
 
-def update_session_state():
-    lang_name = st.session_state["language_select"]
-    if lang_name not in globals.ACE_LANG_OPTIONS:
-        lang_name = list(globals.ACE_LANG_OPTIONS.keys())[0]
-
-    st.session_state["initial_code"] = globals.ACE_LANG_OPTIONS[lang_name]["placeholder"]
-    st.session_state["selected_lang"] = lang_name
-    st.session_state["selected_lang_extension"] = globals.ACE_LANG_OPTIONS[lang_name]["extension"]
-
 if "language_select" not in st.session_state:
-    st.session_state["language_select"] = list(globals.ACE_LANG_OPTIONS.keys())[0]
+    st.session_state["language_select"] = "Python"
 
-if "selected_lang" not in st.session_state:
-    st.session_state["selected_lang"] = st.session_state["language_select"]
+if "code_content" not in st.session_state:
+    st.session_state["code_content"] = globals.ACE_LANG_OPTIONS["Python"]["placeholder"]
 
-if "selected_lang_extension" not in st.session_state:
-    st.session_state["selected_lang_extension"] = globals.ACE_LANG_OPTIONS[st.session_state["language_select"]]["extension"]
-
-if "initial_code" not in st.session_state:
-    st.session_state["initial_code"] = globals.ACE_LANG_OPTIONS[st.session_state["language_select"]]["placeholder"]
-
-lang_keys = list(globals.ACE_LANG_OPTIONS.keys())
-selected_index = lang_keys.index(st.session_state["language_select"])
-
-selected_lang_ext = st.session_state["selected_lang_extension"]
-initial_code = st.session_state["initial_code"]
+selected_lang = st.session_state["language_select"]
+selected_lang_ext = globals.ACE_LANG_OPTIONS[selected_lang]["extension"]
 
 # File paths
 code_folder = 'code'
@@ -120,7 +99,6 @@ def success_message(msg="Code saved!"):
     time.sleep(0.5)
     placeholder.empty()
 
-
 # ---------------------------------
 # Layout: Code Editor + Audio
 # ---------------------------------
@@ -129,28 +107,35 @@ st.divider()
 col1, col2 = st.columns([1, 0.75])
 
 # ==========================
-# CODE EDITOR
+# CODE EDITOR (using st.text_area)
 # ==========================
 with col1:
     # Select language
-    lang_display = st.selectbox(
+    lang_keys = list(globals.ACE_LANG_OPTIONS.keys())
+    
+    def on_language_change():
+        new_lang = st.session_state["language_select"]
+        st.session_state["code_content"] = globals.ACE_LANG_OPTIONS[new_lang]["placeholder"]
+    
+    st.selectbox(
         "Select Programming Language",
         options=lang_keys,
-        index=selected_index,
         key="language_select",
-        on_change=update_session_state
+        on_change=on_language_change
     )
 
-    # ACE code editor
+    # Code editor using text_area
     st.write("Solution:")
-    code = st_ace(
-        value=initial_code,
-        language=selected_lang_ext,
-        auto_update=True,
-        theme='dracula',
-        key=f'ace_editor_{st.session_state["language_select"]}',
-        height=300
+    code = st.text_area(
+        label="Code Editor",
+        value=st.session_state["code_content"],
+        height=300,
+        key="code_editor",
+        label_visibility="collapsed"
     )
+    
+    # Update session state
+    st.session_state["code_content"] = code
 
     spc1, col, spc2 = st.columns(3)
     with col:
@@ -158,7 +143,6 @@ with col1:
             with open(file_path, "w") as f:
                 f.write(code)
             success_message()
-
 
 # ==========================
 # AUDIO RECORDING + WHISPER
@@ -179,10 +163,14 @@ diff = current_q.get('difficulty', 'medium').lower()
 suggested_time_sec = suggested_times.get(diff, 30 * 60)
 suggested_time_min = suggested_time_sec // 60
 
-# Cache whisper model
+# Cache whisper model with error handling
 @st.cache_resource
 def load_transcription():
-    return TranscriptionService(model_size="small")
+    try:
+        return TranscriptionService(model_size="tiny")  # Use tiny model to reduce memory
+    except Exception as e:
+        st.error(f"Failed to load transcription service: {e}")
+        return None
 
 with col2:
     status = st.status(f":orange[Record & Respond to the Following:]", expanded=False)
@@ -206,20 +194,24 @@ with col2:
     wav_audio_data = st_audiorec()
 
     if wav_audio_data is not None:
-            status.update(label=f":green[Record & Respond to the Following:]", state="complete")
-            # new expander
-            status = st.status("**Processing Audio...**", expanded=True)            
-            os.makedirs("audio", exist_ok=True)
-            filename = "audio/user_recorded.wav"
+        status.update(label=f":green[Record & Respond to the Following:]", state="complete")
+        status = st.status("**Processing Audio...**", expanded=True)            
+        os.makedirs("audio", exist_ok=True)
+        filename = "audio/user_recorded.wav"
+        
+        try:
+            with open(filename, "wb") as f:
+                f.write(wav_audio_data)
+            with status:
+                st.success("✅ Audio saved!")
             
-            try:
-                with open(filename, "wb") as f:
-                    f.write(wav_audio_data)
-                with status:
-                    st.success("✅ Audio saved!")
-                
-                status.update(label="**Transcribing...**", expanded=True)
-                service = load_transcription()
+            status.update(label="**Transcribing...**", expanded=True)
+            service = load_transcription()
+            
+            if service is None:
+                status.update(label="**Transcription Service Unavailable**", state="error")
+                st.error("Could not load transcription service. Please try again.")
+            else:
                 transcript = service.transcribe(filename)
 
                 if transcript:
@@ -238,15 +230,13 @@ with col2:
                         st.success("✅ Transcribed!")
                         st.write(transcript)
                         st.caption(f"{len(transcript.split())} words")
-
                 else:
                     status.update(label="**Transcription Failed.**", state="error")
                     st.error("Transcription returned empty text.")
 
-            except Exception as e:
-                status.update(label="**An Error Occurred.**", state="error")
-                st.error(f"Error during file operations or transcription: {e}")
-
+        except Exception as e:
+            status.update(label="**An Error Occurred.**", state="error")
+            st.error(f"Error: {e}")
 
 # ---------------------------------
 # Navigation
@@ -255,17 +245,13 @@ with col2:
 st.divider()
 col1, spc, col2 = st.columns([1, 1, 1])
 
-if st.session_state.transcript and st.session_state.audio_file:
-    is_transcribed = True
-else:
-    is_transcribed = False
+is_transcribed = bool(st.session_state.transcript and st.session_state.audio_file)
 
 if col1.button("Practice New", key="practice_new_btn", use_container_width=True):
     st.switch_page("pages/select_criteria.py")
 
-if col2.button("Submit & View Results", key="results_btn", use_container_width=True, disabled= not is_transcribed):
+if col2.button("Submit & View Results", key="results_btn", use_container_width=True, disabled=not is_transcribed):
     with open(file_path, "w") as f:
         f.write(code)
-
     st.session_state.page = 'results'
     st.switch_page("pages/results.py")
