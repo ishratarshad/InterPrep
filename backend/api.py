@@ -6,12 +6,12 @@ import os
 import json
 import google.generativeai as genai
 
-# --------- FastAPI app ---------
-app = FastAPI(
-    title="InterPrep Backend",
-    description="ASR + Analysis backend for InterPrep",
-    version="0.1.0",
-)
+# # --------- FastAPI app ---------
+# app = FastAPI(
+#     title="InterPrep Backend",
+#     description="ASR + Analysis backend for InterPrep",
+#     version="0.1.0",
+# )
 
 # --------- Gemini setup ---------
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
@@ -103,9 +103,9 @@ You must:
 
 # --------- Healthcheck ---------
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+# @app.get("/health")
+# def health():
+#     return {"status": "ok"}
 
 
 # --------- JSON extraction helper ---------
@@ -143,9 +143,10 @@ def extract_json_safely(raw: str):
 
 # --------- Gemini-powered /analyze ---------
 
-@app.post("/analyze", response_model=AnalyzeResponse)
-def analyze(req: AnalyzeRequest):
-    transcript = req.transcript
+def analyze_transcript(transcript: str):
+# @app.post("/analyze", response_model=AnalyzeResponse)
+# def analyze(req: AnalyzeRequest):
+    # transcript = req.transcript
 
     prompt = f"""
 You are a technical interviewer evaluating a candidate's explanation
