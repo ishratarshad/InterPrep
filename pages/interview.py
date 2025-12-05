@@ -158,6 +158,12 @@ with col1:
 # ==========================
 # AUDIO RECORDING + WHISPER
 # ==========================
+
+# Cache whisper model
+@st.cache_resource
+def load_transcription():
+    return TranscriptionService(model_size="small")
+
 with col2:
     status = st.status(f":orange[Record & Respond to the Following:]", expanded=False)
     with open("evaluation/rubric_mini.md", "r", encoding="utf-8") as f:
@@ -173,11 +179,6 @@ with col2:
             f.write(audio.getbuffer())
 
         status.update(label="Audio saved!", state="complete")
-
-        # Cache whisper model
-        @st.cache_resource
-        def load_transcription():
-            return TranscriptionService(model_size="small")
 
         with st.spinner("Transcribing..."):
             try:
@@ -214,10 +215,15 @@ with col2:
 st.divider()
 col1, spc, col2 = st.columns([1, 1, 1])
 
+if st.session_state.transcript and st.session_state.audio_file:
+    is_transcribed = True
+else:
+    is_transcribed = False
+
 if col1.button("Practice New", key="practice_new_btn", use_container_width=True):
     st.switch_page("pages/select_criteria.py")
 
-if col2.button("Submit & View Results", key="results_btn", use_container_width=True):
+if col2.button("Submit & View Results", key="results_btn", use_container_width=True, disabled= not is_transcribed):
     with open(file_path, "w") as f:
         f.write(code)
 
