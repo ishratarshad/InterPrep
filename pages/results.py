@@ -115,7 +115,7 @@ with col2:
                 st.session_state["analysis_result"] = analysis_result
 
         if analysis_result:
-            score = analysis_result.get("score", {})
+            score = analysis_result.score
             overall_pct, overall_label, level_msg = compute_overall_score(score)
 
             # ---------- SCORE BADGE ----------
@@ -145,15 +145,15 @@ with col2:
             c3.metric("Clarity", score.get("clarity", 0))
 
             st.markdown("##### Transcript Evaluation Comments")
-            for comment in analysis_result.get("comments", []):
+            for comment in analysis_result.comments:
                 st.write(f"- {comment}")
 
             st.markdown("##### Overall Level")
-            st.write(analysis_result.get("overall_level", "beginner"))
+            st.write(getattr(analysis_result, "overall_level", "beginner"))
 
             # ---------- PERSONALIZED FEEDBACK ----------
             st.markdown("#### Personalized Feedback")
-            st.info(analysis_result.get("reasoning", "No detailed reasoning provided."))
+            st.write(getattr(analysis_result, "reasoning", "No detailed reasoning provided."))
 
             # ---------- 🎯 LESSON PLAN SECTION ----------
             st.subheader("How To Improve (Lesson Plan)")
@@ -342,7 +342,7 @@ What to Practice Next
             }
 
             # --------- FIX: normalize predicted category and fallback safely ---------
-            raw_cat = str(analysis_result.get("predicted_category", "") or "").strip().lower()
+            raw_cat = str(analysis_result.predicted_category or "").strip().lower()
             if raw_cat in LESSON_PLANS:
                 category_key = raw_cat
             else:
