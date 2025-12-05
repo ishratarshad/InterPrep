@@ -2,7 +2,7 @@ import streamlit as st
 import shared.navbar as navbar_module
 import globals
 import os
-import requests  # for calling the FastAPI backend
+# import requests  # for calling the FastAPI backend
 from backend.api import analyze_transcript
 
 st.set_page_config(page_title="Results", layout="wide")
@@ -140,9 +140,9 @@ with col2:
             # ---------- BREAKDOWN ----------
             st.markdown("##### Rubric Breakdown")
             c1, c2, c3 = st.columns(3)
-            c1.metric("Problem Match", score.get("problem_id", 0))
-            c2.metric("Complexity", score.get("complexity", 0))
-            c3.metric("Clarity", score.get("clarity", 0))
+            c1.metric("Problem Match", score.problem_id)
+            c2.metric("Complexity", score.complexity)
+            c3.metric("Clarity", score.clarity)
 
             st.markdown("##### Transcript Evaluation Comments")
             for comment in analysis_result.comments:
