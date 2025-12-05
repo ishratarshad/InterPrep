@@ -80,15 +80,16 @@ with col2:
     # DIFFICULTY
     selected_diffs = st.multiselect(
         "Difficulty", df["difficulty"].unique().tolist(),
-        default=['Easy', 'Medium'])
+        default=['Easy'])
 
     # COMPANIES
     st.write("")
-    sel_companies = st.multiselect('Asked by SELECT Companies?', uniq_companies, default=['Google', 'Microsoft', 'Bloomberg', 'IBM'])
+    sel_companies = st.multiselect('Asked by SELECT Companies?', uniq_companies, default=['Google', 'Bloomberg'])
 
 # TOPICS
-default_topics = ['Array', 'String', 'Hash Table', 'Dynamic Programming', 'Tree']
+default_topics = ['Array', 'Binary Search']
 sel_topics = st.multiselect("Core Topics", uniq_topics, default=default_topics)
+df['related_topics'] = df['related_topics'].str.replace(',', ', ', regex=False)
 
 
 
