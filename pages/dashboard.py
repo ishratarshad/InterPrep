@@ -15,6 +15,7 @@ if "page" not in st.session_state:
 
 pages = {
     "About": "about",
+    "Rubric": "rubric",
     "Practice": "select_criteria",
     "Dashboard": "dashboard"
 }
