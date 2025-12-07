@@ -78,7 +78,7 @@ st.write("")
 spc1, col_demo, spc, col_interview, spc2 = st.columns([0.5, 1, 0.25, 1, 0.5])
 
 with col_demo:
-    if st.button("Quick Demo", use_container_width=True):
+    if st.button("Quick Demo", width='stretch'):
         PROBLEM_ID = random.choice([1, 412, 13, 14, 1796])
             # 412. fizzbuzz
             # 1. two sum
@@ -98,7 +98,7 @@ with col_demo:
 
 
 with col_interview:
-    if st.button("Start Interview", use_container_width=True):
+    if st.button("Start Interview", width='stretch'):
         if not difficulty and not algorithm_types:
             st.error("Select at least one filter.")
         else:

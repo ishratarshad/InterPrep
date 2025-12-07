@@ -274,9 +274,9 @@ st.divider()
 
 # ----------------- NAVIGATION -----------------
 col1, spc, col2 = st.columns([1, 1, 1])
-if col1.button("Practice New", use_container_width=True):
+if col1.button("Practice New", width='stretch'):
     st.switch_page("pages/select_criteria.py")
 
-if col2.button("Dashboard", use_container_width=True):
+if col2.button("Dashboard", width='stretch'):
     st.session_state.page = "dashboard"
     st.switch_page("pages/dashboard.py")
