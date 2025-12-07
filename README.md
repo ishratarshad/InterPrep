@@ -1,6 +1,6 @@
 # InterPrep: Voice-Interactive AI Interview Trainer
 
-## Overview
+## Overview:
 Many students practice LeetCode problems but struggle to explain their thought process clearly in technical interviews. 
 
 **InterPrep** bridges this gap by providing a *voice-interactive platform* that simulates real interview conditions, helping you practice both coding and verbal communication skills.
