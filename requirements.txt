@@ -1,7 +1,5 @@
 # Core Streamlit
-streamlit
-streamlit-navigation-bar
-streamlit_ace
+streamlit>=1.28.0
 
 # Data Processing
 pandas
@@ -11,14 +9,11 @@ numpy
 altair
 matplotlib
 
-# NLP & ML (for future feedback engine)
+# NLP & ML
 scikit-learn
 transformers
 torch
 torchaudio
-
-# Optional: For enhanced text processing
-nltk
 
 # Audio recording
 streamlit-audiorec
@@ -32,7 +27,5 @@ google-generativeai
 # Backend
 fastapi
 
-# Development
+# Development (optional)
 pytest
-black
-flake8
