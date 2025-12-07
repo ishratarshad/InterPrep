@@ -6,28 +6,27 @@ Many students practice LeetCode problems but struggle to explain their thought p
 **InterPrep** bridges this gap by providing a *voice-interactive platform* that simulates real interview conditions, helping you practice both coding and verbal communication skills.
 
 ---
-## Preview
-![InterPrep](images/readme-image.png)
+## Visit InterPrep
+![Visit InterPrep](images/interprep-qr-code.png)
 
 ---
 
 ## Tech Stack
 
+### Dataset
+
+- ![Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo) - Leetcode dataset (question bank)​
+
 ### Frontend
-- ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white) – Web application framework
-- ![Ace Editor](https://img.shields.io/badge/Streamlit_Ace-000000?style=for-the-badge&logo=ace&logoColor=white) – In-browser code editor with syntax highlighting
-- ![Altair](https://img.shields.io/badge/Altair-1C78B6?style=for-the-badge&logo=altair&logoColor=white) ![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge&logo=matplotlib&logoColor=white) – Data visualization for progress tracking
+- ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white) - Web application framework
+<!-- - ![Ace Editor](https://img.shields.io/badge/Streamlit_Ace-000000?style=for-the-badge&logo=ace&logoColor=white) – In-browser code editor with syntax highlighting -->
+
 
 ### Backend & AI
-- ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) – RESTful API backend
-- ![Whisper AI](https://img.shields.io/badge/Whisper_AI-000000?style=for-the-badge&logo=microphone&logoColor=white) (via [**faster-whisper**](https://github.com/SYSTRAN/faster-whisper)) – Automatic speech recognition for transcription
-- ![Google Gemini](https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white) – LLM-powered evaluation and feedback generation
-- ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white) – Data processing and analysis
-
-### Machine Learning
-- ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white) – Deep learning framework
-- ![Transformers (Hugging Face)](https://img.shields.io/badge/Hugging_Face-FBA919?style=for-the-badge&logo=huggingface&logoColor=white) – NLP model support
-- ![scikit-learn](https://img.shields.io/badge/scikit_learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white) – ML utilities
+- ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo) - Programming language​
+- ![Whisper ASR](https://img.shields.io/badge/Whisper-000000?style=for-the-badge&logo=microphone&logoColor=white) (via [**faster-whisper**](https://github.com/SYSTRAN/faster-whisper)) - optimized **OpenAI**'s Whisper for Automatic speech recognition (ASR) - audio transcription
+- ![Gemini](https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white) - LLM-powered evaluation and feedback generation
+- ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white) - Data processing and analysis
 
 ---
 
@@ -54,8 +53,8 @@ pip install -r requirements.txt
 ```
 
 #### 4. Configure environment variables
-Create a `.env` file in the project root:
-```env
+Create `.streamlit/secrets.toml` and add Gemini API key
+```
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
@@ -122,7 +121,7 @@ InterPrep/
 
 ![InterPrep Workflow](images/readme-workflow.png)
 
-### 1. Select Criteria (Practice)
+### 1. Select Criteria
 Choose your criteria for problem difficulty and algorithm types to get a curated question
 
 ### 2. Practice Interview
@@ -136,8 +135,8 @@ Receive AI-generated evaluation on:
 - **Complexity Analysis (35 pts)** – Time/space complexity correctness
 - **Clarity of Explanation (30 pts)** – Structure, technical communication, completeness
 
-### 4. Track Progress (Dashboard)
-Monitor your improvement over time through the dashboard
+### 4. Leetcode Dashboard
+Find more Leetcode questions to practice. 
 
 ---
 
