@@ -31,21 +31,6 @@ st.write("")
 st.markdown("<h3 style='text-align: center; width: 100%;'>Track and refine your technical interview practice.</h3>", unsafe_allow_html=True)
 st.write("")
 
-# def render_img_html(image_path, caption=None):
-#     with open(image_path, "rb") as f:
-#         image_b64 = base64.b64encode(f.read()).decode()
-#         st.markdown(f'''
-#                     <div style="text-align:center;"> 
-#                         <img src="data:image/png;base64,{image_b64}" style="width:80%; max-width:900px; height:auto; margin:auto; display:block;"/> 
-#                         {f'<p style="font-size:16px; color:gray; margin-top:8px;">{caption}</p>' if caption else ''}
-#                     </div>
-#                     ''', unsafe_allow_html=True)
-
-# image_path = "images/interprep-app.png"
-# render_img_html(image_path, caption="")
-
-# st.divider()
-
 def render_img_html(image_path, caption=None):
     with open(image_path, "rb") as f:
         image_b64 = base64.b64encode(f.read()).decode()
