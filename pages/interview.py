@@ -17,6 +17,7 @@ if "page" not in st.session_state:
 
 # Navigation setup
 pages = {
+    "Home": "home",
     "About": "about",
     "Rubric": "rubric",
     "Practice": "select_criteria",
