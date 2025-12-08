@@ -77,9 +77,9 @@ def on_language_change():
 if "language_select" not in st.session_state:
     st.session_state["language_select"] = "Python"
 
-if "code_content" not in st.session_state:
-    initial_lang = st.session_state["language_select"]
-    st.session_state["code_content"] = globals.ACE_LANG_OPTIONS[initial_lang]["placeholder"]
+# if "code_content" not in st.session_state:
+initial_lang = st.session_state["language_select"]
+st.session_state["code_content"] = globals.ACE_LANG_OPTIONS[initial_lang]["placeholder"]
 
 if "code_editor_key" not in st.session_state:
     st.session_state["code_editor_key"] = f"code_editor_key_{st.session_state['language_select']}"
@@ -287,9 +287,9 @@ def submit_solution():
     st.session_state.do_redirect = True
 
 
-def handle_transcription(wav_audio_data, status_container):
+def handle_transcription(wav_audio_data, status_container, status):
     status_placeholder = status_container.empty()
-    status = status_placeholder.status("**Processing Audio...**", expanded=True)
+    status.update(label="**Processing Audio...**", expanded=True)
 
     try:
         # save audio
@@ -400,29 +400,26 @@ with col_right:
                 dynamic_timer_placeholder.markdown("✅ **Session ended.** Review below.")
 
 
-        # AUDIO RECORD WIDGERT
+        # AUDIO RECORD WIDGET
         new_wav_audio_data = st_audiorec()
+        status_placeholder = st.empty()
 
         if new_wav_audio_data is not None:
             st.session_state.wav_audio_data = new_wav_audio_data
             st.session_state.transcript = None
 
+            # auto transcribe after audio save
+            with status_placeholder:
+                status = st.status("**Saving Audio...**", expanded=True)
+                handle_transcription(st.session_state.wav_audio_data, st.container(), status)
 
-        # auto transcribe after audio save
-        st.markdown("---") 
         transcription_status_container = st.container()
 
-        if st.session_state.wav_audio_data is not None and st.session_state.transcript is None:
-            handle_transcription(st.session_state.wav_audio_data, transcription_status_container)
-
-        elif st.session_state.transcript:
-            # PREVIEW
+        if st.session_state.get('wav_audio_data') is not None and st.session_state.get('transcript') is None:
             with transcription_status_container:
-                with st.expander("**Transcript Preview**", expanded=True):
-                    st.markdown(st.session_state.transcript)
-            # SUBMIT BUTTON
-            if st.button("Submit Final Solution", key="inline_submit_btn", width='stretch', on_click=submit_solution):
-                pass
+                st.info("Transcribing... Please wait...")
+        elif st.session_state.transcript:
+            pass
         else:
             with transcription_status_container:
                 st.markdown("Awaiting audio recording...")
