@@ -3,6 +3,7 @@ import shared.navbar as navbar_module
 from backend.leetcode_manager import LeetCodeManager
 import globals
 import pandas as pd
+import random
 
 st.set_page_config(page_title="Select Criteria", layout="wide")
 globals.load_global_styles("globals.css")
@@ -74,10 +75,30 @@ st.write("")
 st.write("")
 st.write("")
 st.write("")
-spc1, col, spc2 = st.columns([1, 1, 1])
+spc1, col_demo, spc, col_interview, spc2 = st.columns([0.5, 1, 0.25, 1, 0.5])
 
-with col:
-    if st.button("Start Interview", use_container_width=True):
+with col_demo:
+    if st.button("Quick Demo", width='stretch'):
+        PROBLEM_ID = random.choice([1, 412, 13, 14, 1796])
+            # 412. fizzbuzz
+            # 1. two sum
+            # 13. roman to integer
+            # 14. longest common prefix
+            # 1796. second largest digit in a string
+        demo_problem = manager.get_fixed_problem_by_id(PROBLEM_ID)
+        if demo_problem:
+            st.session_state.filtered_questions = demo_problem
+            st.session_state.current_question = None
+            st.session_state.transcript = ""
+            st.session_state.feedback = ""
+            st.session_state.page = 'interview'
+            st.switch_page("pages/interview.py")
+        else:
+            st.error(f"Demo problem with ID '{PROBLEM_ID}' not found in the dataset.")
+
+
+with col_interview:
+    if st.button("Start Interview", width='stretch'):
         if not difficulty and not algorithm_types:
             st.error("Select at least one filter.")
         else:

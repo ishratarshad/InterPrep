@@ -140,7 +140,7 @@ try:
     
     st.dataframe(
         df[['title', 'difficulty', 'related_topics']].head(7), 
-        use_container_width=True, 
+        width='stretch', 
         hide_index=True
     )
     st.markdown("Source: gzipChrist's [Leetcode Problem Dataset on Kaggle](https://www.kaggle.com/datasets/gzipchrist/leetcode-problem-dataset/data)")

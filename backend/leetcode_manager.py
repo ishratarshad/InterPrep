@@ -82,3 +82,30 @@ class LeetCodeManager:
             'difficulty_distribution': self.df['difficulty'].value_counts().to_dict() if 'difficulty' in self.df.columns else {},
             'algorithm_distribution': {}
         }
+
+
+    def get_fixed_problem_by_id(self, problem_identifier):
+        row = None
+        try:
+            target_id = int(problem_identifier)
+        except (ValueError, TypeError):
+            return None
+
+        if 'id' in self.df.columns:
+            df_match = self.df[self.df['id'].eq(target_id)]
+            if not df_match.empty:
+                row = df_match.iloc[0]
+                
+        if row is not None:
+            topics = row.get('related_topics', '')
+            topics_list = [t.strip() for t in str(topics).split(',') if t.strip()] if pd.notna(topics) else []
+            
+            return [{
+                'id': row.get('id', row.name),
+                'title': row.get('title', ''),
+                'difficulty': row.get('difficulty', 'medium'),
+                'question': row.get('description', row.get('title', '')),
+                'topics': topics_list,
+                'companies': row.get('companies', '')
+            }]
+        return None
