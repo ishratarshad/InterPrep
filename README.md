@@ -1,9 +1,18 @@
 # InterPrep: Voice-Interactive AI Interview Trainer
 
+### Track and refine your technical interview practice.
+![InterPrep](images/interprep-app.png)
+
 ## Overview:
 Many students practice LeetCode problems but struggle to explain their thought process clearly in technical interviews. 
 
 **InterPrep** bridges this gap by providing a *voice-interactive platform* that simulates real interview conditions, helping you practice both coding and verbal communication skills.
+
+<br>
+
+![InterPrep Preview - FizzBuzz](images/fizzbuzz-preview.png)
+
+
 
 ---
 ## Visit InterPrep
@@ -24,8 +33,11 @@ Many students practice LeetCode problems but struggle to explain their thought p
 
 ### Backend & AI
 - ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo) - Programming language​
+
 - ![Whisper ASR](https://img.shields.io/badge/Whisper-000000?style=for-the-badge&logo=microphone&logoColor=white) (via [**faster-whisper**](https://github.com/SYSTRAN/faster-whisper)) - optimized **OpenAI**'s Whisper for Automatic speech recognition (ASR) - audio transcription
+
 - ![Gemini](https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white) - LLM-powered evaluation and feedback generation
+
 - ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white) - Data processing and analysis
 
 ---
@@ -73,14 +85,17 @@ The app will open in your browser at `http://localhost:8501`
 InterPrep/
 ├── app.py                     # Main application entry point
 ├── pages/
-│   ├── about.py               # Landing page with project info
+│   ├── home.py                # Landing page with practice preview
+│   ├── about.py               # About page with project info
+│   ├── rubric.py              # Evaluation rubric & grading scheme
 │   ├── select_criteria.py     # Problem filter selection
 │   ├── interview.py           # Code editor + audio recording
 │   ├── results.py             # Evaluation and feedback display
-│   └── dashboard.py           # Progress tracking and metrics
+│   └── dashboard.py           # Leetcode study plan recommender
 ├── backend/
-│   ├── api.py                 # FastAPI endpoints for AI analysis
-│   ├── transcription.py       # Whisper integration
+│   ├── api.py                 # Gemini API endpoints for AI analysis
+│   ├── transcription.py       # Whisper (faster-whisper) integration
+│   ├── leetcode_dataset.csv   # Leetcode question bank
 │   └── leetcode_manager.py    # Problem filtering logic
 ├── evaluation/                # Rubric and grading documentation
 ├── code/                      # stores user's code solution; generated upon run-through of code
@@ -88,8 +103,12 @@ InterPrep/
 ├── transcript/                # stores user's audio transcript; generated upon run-through of code
 ├── shared/
 │   └── navbar.py              # Navigation component
+├── .streamlit/
+│   ├── config.toml            # Shared styles and constants
+│   └── secrets.toml           # stores environment variables
 ├── .env                       # stores environment variables
 ├── globals.py                 # Shared styles and constants
+├── globals.css                # Shared styles and fonts
 └── requirements.txt
 ```
 
@@ -102,7 +121,7 @@ InterPrep/
 - **Multi-Language Code Editor** – Write solutions in Python, JavaScript, C++, Java, Go, PHP, Swift, or TypeScript
 - **Problem Filtering** – Select problems by difficulty (Easy, Medium, Hard) and algorithm type
 - **AI-Powered Feedback** – Get evaluated on problem identification, complexity analysis, and explanation clarity using Gemini AI
-- **Progress Tracking** – Monitor your performance over time through an interactive dashboard
+- **Leetcode Problem Recommender** – Monitor your performance over time through an interactive dashboard
 
 ### Algorithm Categories
 - Arrays & HashMaps
@@ -124,10 +143,10 @@ InterPrep/
 ### 1. Select Criteria
 Choose your criteria for problem difficulty and algorithm types to get a curated question
 
-### 2. Practice Interview
+### 2. Practice Interview Problem
 - Write your solution in the integrated code editor
-- Record your verbal explanation answering a follow-up question
-- Audio is automatically transcribed using Whisper AI
+- Record your verbal explanation answering the evaluation criteria
+- Audio is automatically transcribed using faster-whisper (an optimized Whisper ASR tool)
 
 ### 3. Get Feedback
 Receive AI-generated evaluation on:

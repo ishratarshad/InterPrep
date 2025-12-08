@@ -13,10 +13,10 @@ if "page" not in st.session_state:
 
 pages = {
     "Home": "home",
-    "About": "about",
     "Rubric": "rubric",
     "Practice": "select_criteria",
-    "Dashboard": "dashboard"
+    "Dashboard": "dashboard",
+    "About": "about",
 }
 
 navbar_module.apply_navbar_styles()
@@ -25,12 +25,12 @@ navbar_module.navbar(pages, st.session_state.page)
 # Load problem manager
 @st.cache_resource
 def load_manager():
-    return LeetCodeManager("backend/leetcode_dataset - lc.csv")
+    return LeetCodeManager("backend/leetcode_dataset.csv")
 
 @st.cache_data
 def get_all_companies():
     """Extract all unique companies from the dataset"""
-    df = pd.read_csv("backend/leetcode_dataset - lc.csv")
+    df = pd.read_csv("backend/leetcode_dataset.csv")
     companies = set()
     for company_list in df['companies'].fillna(''):
         companies.update([c.strip() for c in company_list.split(',') if c.strip()])

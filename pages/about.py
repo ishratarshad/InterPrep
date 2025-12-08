@@ -12,10 +12,10 @@ if "page" not in st.session_state:
 
 pages = {
     "Home": "home",
-    "About": "about",
     "Rubric": "rubric",
     "Practice": "select_criteria",
-    "Dashboard": "dashboard"
+    "Dashboard": "dashboard",
+    "About": "about",
 }
 
 navbar_module.apply_navbar_styles()
@@ -23,8 +23,8 @@ navbar_module.navbar(pages, st.session_state.page)
 
 
 ## --
-st.title("InterPrep")
-st.subheader("Track and refine your technical interview practice.")
+st.markdown("<h1 style='text-align: center;'>InterPrep</h1>", unsafe_allow_html=True )
+st.markdown("<h3 style='text-align: center; width: 100%;'>Track and refine your technical interview practice.</h3>", unsafe_allow_html=True)
 st.write("")
 
 def render_img_html(image_path, caption=None):
@@ -132,7 +132,7 @@ st.markdown("---")
 st.header("📚 Preview Questions")
 st.caption("A glance at the kind of problems you'll be tackling.")
 try:
-    df = pd.read_csv("backend/leetcode_dataset - lc.csv", encoding="utf-8")
+    df = pd.read_csv("backend/leetcode_dataset.csv", encoding="utf-8")
     
     df.columns = df.columns.str.lower()
     df.columns = df.columns.str.replace(r'[^\w\s]', '', regex=True)
@@ -147,4 +147,4 @@ try:
     st.markdown("Source: gzipChrist's [Leetcode Problem Dataset on Kaggle](https://www.kaggle.com/datasets/gzipchrist/leetcode-problem-dataset/data)")
 
 except FileNotFoundError:
-    st.warning("Could not load question preview dataset. Please ensure 'backend/leetcode_dataset - lc.csv' is in the correct location.")
+    st.warning("Could not load question preview dataset. Please ensure 'backend/leetcode_dataset.csv' is in the correct location.")

@@ -18,10 +18,10 @@ if "page" not in st.session_state:
 # Navigation setup
 pages = {
     "Home": "home",
-    "About": "about",
     "Rubric": "rubric",
     "Practice": "select_criteria",
-    "Dashboard": "dashboard"
+    "Dashboard": "dashboard",
+    "About": "about",
 }
 navbar_module.apply_navbar_styles()
 navbar_module.navbar(pages, st.session_state.page)

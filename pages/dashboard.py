@@ -15,10 +15,10 @@ if "page" not in st.session_state:
 
 pages = {
     "Home": "home",
-    "About": "about",
     "Rubric": "rubric",
     "Practice": "select_criteria",
-    "Dashboard": "dashboard"
+    "Dashboard": "dashboard",
+    "About": "about",
 }
 
 navbar_module.apply_navbar_styles()
@@ -32,7 +32,7 @@ st.divider()
 #### DATASET #####
 @st.cache_data
 def load_data():
-    df = pd.read_csv('backend/leetcode_dataset - lc.csv')
+    df = pd.read_csv('backend/leetcode_dataset.csv')
     df['related_topics'] = df['related_topics'].fillna('')
     df['companies'] = df['companies'].fillna('')
     df['similar_questions'] = df['similar_questions'].fillna('')
