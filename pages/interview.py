@@ -128,9 +128,9 @@ if 'timer_expired' not in st.session_state:
 
 # suggested audio times (sec) for recordings
 suggested_times = {
-    'easy': 15 * 60,
-    'medium': 30 * 60,
-    'hard': 60 * 60
+    'easy': 5 * 60,
+    'medium': 10 * 60,
+    'hard': 15 * 60
 }
 
 diff = current_q.get('difficulty', 'medium').lower()
@@ -344,6 +344,14 @@ def handle_transcription(wav_audio_data, status_container, status):
         pass
 
 
+messages = [
+    "🙏 **Note**: Processing & transcribing can take as long as the audio duration.",
+    "🙏 **Note**: Please wait! Processing & transcribing can take as long as the audio clip.",
+    "🙏 **Note**: Just a moment... Transcribing can take as long as the audio duration.",
+    "🙏 **Note**: Audio processing and transcription can take roughly the length of your clip.",
+    "🙏 **Note**: Hold on! Transcribing can take about as long as the recording itself.",
+]
+
 
 # ---------------------------------------------------------------------------------------
 with col_right:
@@ -423,6 +431,8 @@ with col_right:
         else:
             with transcription_status_container:
                 st.markdown("Awaiting audio recording...")
+                selected_message = random.choice(messages)
+                st.info(selected_message)
 
 
 

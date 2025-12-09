@@ -26,7 +26,15 @@ navbar_module.navbar(pages, st.session_state.page)
 st.header("Evaluation & Feedback")
 st.write("")
 
+problem_text = st.session_state.get("problem", "")
+if problem_text:
+    st.markdown("#### Problem")
+    st.write(problem_text)
+    st.write("")
+
 # ----------------- CODE SUBMITTED -----------------
+code_text = ""
+
 col1, col2 = st.columns([1.25, 1])
 with col1:
     st.markdown("#### Code Submitted")
@@ -114,16 +122,22 @@ with col2:
     if transcript_text:
         if analysis_result is None and not eval_running:
             st.session_state["eval_running"] = True
-            with st.spinner("Analyzing your explanation..."):
-                analysis_result = analyze_transcript( problem_text or "",
-                    code_text or "",transcript_text)
+            with st.spinner("Analyzing your explanation with Gemini..."):
+                analysis_result = analyze_transcript(
+                    problem_text or "",
+                    code_text or "",
+                    transcript_text
+                )
                 st.session_state["analysis_result"] = analysis_result
             st.session_state["eval_running"] = False
 
         if st.button("Re-run Evaluation"):
             with st.spinner("Re-running evaluation..."):
-                analysis_result = analyze_transcript(problem_text or "",
-                    code_text or "",transcript_text)
+                analysis_result = analyze_transcript(
+                    problem_text or "",
+                    code_text or "",
+                    transcript_text
+                    )
                 st.session_state["analysis_result"] = analysis_result
 
         if analysis_result:
@@ -141,13 +155,13 @@ with col2:
                 else "#eab308" if overall_pct >= 60
                 else "#f97316" if overall_pct >= 40
                 else "#ef4444"
-            )   
+            )
+
             st.markdown(
                 f"""
                 <div style="
-                    display: grid;
-                    grid-template-columns: 1fr 1fr 1fr;
-                    gap: 1rem;
+                    display: flex;
+                    justify-content: space-around;
                     padding: 1rem;
                     border-radius: 0.75rem;
                     background-color: #E9F5ED;
@@ -156,25 +170,12 @@ with col2:
                     margin-bottom: 1rem;
                 ">
                     <div style="text-align: center;">
-                        <div style="font-size: 0.9rem; color: #212529; font-weight: 600;">Level</div>
-                        <div style="font-size: 1.1rem; color: {badge_color};">{level}</div>
+                        <div style="font-size: 0.9rem; color: #212529; font-weight: 600;">Score</div>
+                        <div style="font-size: 1.2rem; color: {badge_color};">{overall_pct}%</div>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-size: 0.9rem; color: #212529; font-weight: 600;">Score</div>
-                        <div style="font-size: 1.1rem; color: {badge_color};">{overall_pct}%</div>
-                    </div>
-                    <div style="grid-row: span 2; display: flex; align-items: center; justify-content: center;">
-                        <div style="
-                            padding: 0.4rem 0.8rem;
-                            border-radius: 999px;
-                            background-color: {badge_color};
-                            color: white;
-                            font-size: 0.8rem;
-                            font-weight: 600;
-                            text-align: center;
-                        ">
-                            {overall_label}
-                        </div>
+                        <div style="font-size: 0.9rem; color: #212529; font-weight: 600;">Level</div>
+                        <div style="font-size: 1.1rem; color: {badge_color};">{overall_label}</div>
                     </div>
                 </div>
                 """,
@@ -200,7 +201,7 @@ with col2:
             clarity_total = flow + tech + complete 
             
             st.markdown(
-                 """
+                """
                 <style>
                 .metric {
                     text-align: center;
@@ -232,6 +233,58 @@ with col2:
                 unsafe_allow_html=True,
             )
 
+
+            pattern = getattr(score, "pattern_recognition", 0) or 0
+            understanding = getattr(score, "problem_understanding", 0) or 0
+            approach = getattr(score, "approach_selection", 0) or 0
+
+            time_c = getattr(score, "time_complexity", 0) or 0
+            space_c = getattr(score, "space_complexity", 0) or 0
+            case_c = getattr(score, "case_analysis", 0) or 0
+
+            flow = getattr(score, "structure_flow", 0) or 0
+            tech = getattr(score, "technical_communication", 0) or 0
+            complete = getattr(score, "completeness", 0) or 0
+
+            bonus = getattr(score, "bonus_penalty", 0) or 0
+            total_raw = getattr(score, "total_raw", 0) or 0
+
+            problem_total = pattern + understanding + approach        # /35
+            complexity_total = time_c + space_c + case_c              # /35
+            clarity_total = flow + tech + complete 
+
+            st.markdown(
+                """
+                <style>
+                .metric {
+                    text-align: center;
+                    background-color: #E9F5ED;
+                    border: 1px solid #D0E9D4;
+                    border-radius: 0.5rem;
+                    padding: 0.75rem;
+                    box-shadow: 0 1px 3px rgba(46, 125, 50, 0.1);
+                    min-width: 0;
+                    margin-bottom: 0.75rem;
+                }
+                .metric-label {
+                    font-size: 0.9rem;
+                    color: #212529;
+                    margin-bottom: 0.5rem;
+                }
+                .metric-value {
+                    font-size: 1.1rem;
+                    font-weight: bold;
+                    color: #2E7D32;
+                }
+                .metric-sub {
+                    font-size: 0.8rem;
+                    color: #495057;
+                    margin-top: 0.3rem;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True,
+            )
 
 
             # ---------- BREAKDOWN ----------
@@ -270,7 +323,8 @@ with col2:
 
             c1, c2, c3 = st.columns(3)
             with c1:
-                st.markdown(f'''
+                st.markdown(
+                    f'''
                     <div class="metric">
                         <div class="metric-label">Problem Identification</div>
                         <div class="metric-value">{problem_total} / 35</div>
@@ -281,7 +335,8 @@ with col2:
                     ''',
                     unsafe_allow_html=True,)
             with c2:
-                st.markdown(f'''
+                st.markdown(
+                    f'''
                     <div class="metric">
                         <div class="metric-label">Complexity Analysis</div>
                         <div class="metric-value">{complexity_total} / 35</div>
@@ -293,7 +348,8 @@ with col2:
                     unsafe_allow_html=True,
                     )
             with c3:
-                st.markdown(f'''
+                st.markdown(
+                    f'''
                     <div class="metric">
                         <div class="metric-label">Clarity & Explanation</div>
                         <div class="metric-value">{clarity_total} / 30</div>
@@ -372,9 +428,9 @@ st.divider()
 
 # ----------------- NAVIGATION -----------------
 col1, spc, col2 = st.columns([1, 1, 1])
-if col1.button("Practice New"):
+if col1.button("Practice New", width='stretch'):
     st.switch_page("pages/select_criteria.py")
 
-if col2.button("Dashboard"):
+if col2.button("Dashboard", width='stretch'):
     st.session_state.page = "dashboard"
     st.switch_page("pages/dashboard.py")
