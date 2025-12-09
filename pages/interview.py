@@ -128,9 +128,9 @@ if 'timer_expired' not in st.session_state:
 
 # suggested audio times (sec) for recordings
 suggested_times = {
-    'easy': 15 * 60,
-    'medium': 30 * 60,
-    'hard': 60 * 60
+    'easy': 5 * 60,
+    'medium': 10 * 60,
+    'hard': 15 * 60
 }
 
 diff = current_q.get('difficulty', 'medium').lower()
