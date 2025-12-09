@@ -65,24 +65,26 @@ st.divider()
 
 # ------------- HELPER: COMPUTE OVERALL SCORE -------------
 def compute_overall_score(score):
-    vals = [getattr(score, k, 0) for k in ["problem_id", "complexity", "clarity"]]
-    if not vals:
-        return None, "No score", "No rubric scores were returned."
+    """
+    Use the backend's final_score (0–100) and map it to a friendly label and message.
+    """
+    overall_pct = int(getattr(score, "final_score", 0) or 0)
 
-    per_dim_max = 3  # scoring scale 1–3
-    overall_ratio = sum(vals) / (len(vals) * per_dim_max)
-    overall_pct = int(round(overall_ratio * 100))
-
-    if overall_pct >= 85:
-        label = "Strong"
-        msg = "Great job — this explanation looks interview-ready with just minor polishing."
+    if overall_pct >= 90:
+        label = "Excellent"
+        msg = "Outstanding interview-style explanation with strong problem solving and communication."
+    elif overall_pct >= 75:
+        label = "Good"
+        msg = "Solid explanation with room to polish areas like complexity or edge cases."
     elif overall_pct >= 60:
-        label = "On Track"
-        msg = "You’re on a good path. Some areas need tightening, but the core understanding is there."
-    else:
+        label = "Satisfactory"
+        msg = "Core idea is there, but strengthen structure, complexity analysis, and edge cases."
+    elif overall_pct >= 40:
         label = "Needs Improvement"
-        msg = "Focus on fundamentals and clarity. Use the rubric to see what to improve in your explanation."
-
+        msg = "Work on clarifying your approach, complexity, and coverage of test cases."
+    else:
+        label = "Poor"
+        msg = "Focus on fundamentals: restating the problem, explaining your approach, and analyzing complexity."
     return overall_pct, label, msg
 
 # ----------------- SCORING & RUBRIC TEXT -----------------
@@ -173,58 +175,6 @@ with col2:
                 """,
                 unsafe_allow_html=True,
             )
-            pattern = getattr(score, "pattern_recognition", 0) or 0
-            understanding = getattr(score, "problem_understanding", 0) or 0
-            approach = getattr(score, "approach_selection", 0) or 0
-
-            time_c = getattr(score, "time_complexity", 0) or 0
-            space_c = getattr(score, "space_complexity", 0) or 0
-            case_c = getattr(score, "case_analysis", 0) or 0
-
-            flow = getattr(score, "structure_flow", 0) or 0
-            tech = getattr(score, "technical_communication", 0) or 0
-            complete = getattr(score, "completeness", 0) or 0
-
-            bonus = getattr(score, "bonus_penalty", 0) or 0
-            total_raw = getattr(score, "total_raw", 0) or 0
-
-            problem_total = pattern + understanding + approach        
-            complexity_total = time_c + space_c + case_c              
-            clarity_total = flow + tech + complete 
-            
-            st.markdown(
-                """
-                <style>
-                .metric {
-                    text-align: center;
-                    background-color: #E9F5ED;
-                    border: 1px solid #D0E9D4;
-                    border-radius: 0.5rem;
-                    padding: 0.75rem;
-                    box-shadow: 0 1px 3px rgba(46, 125, 50, 0.1);
-                    min-width: 0;
-                    margin-bottom: 0.75rem;
-                }
-                .metric-label {
-                    font-size: 0.9rem;
-                    color: #212529;
-                    margin-bottom: 0.5rem;
-                }
-                .metric-value {
-                    font-size: 1.1rem;
-                    font-weight: bold;
-                    color: #2E7D32;
-                }
-                .metric-sub {
-                    font-size: 0.8rem;
-                    color: #495057;
-                    margin-top: 0.3rem;
-                }
-                </style>
-                """,
-                unsafe_allow_html=True,
-            )
-
 
             pattern = getattr(score, "pattern_recognition", 0) or 0
             understanding = getattr(score, "problem_understanding", 0) or 0
@@ -355,6 +305,7 @@ with col2:
 
 
             st.write("")
+            st.markdown(f"**Bonus / Penalty:** {bonus} &nbsp;&nbsp; | &nbsp;&nbsp; **Raw Score:** {total_raw} / 110")
             st.info(level_msg)
             st.write("")
 
