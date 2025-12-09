@@ -344,6 +344,14 @@ def handle_transcription(wav_audio_data, status_container, status):
         pass
 
 
+messages = [
+    "🙏 **Note**: Processing & transcribing can take as long as the audio duration.",
+    "🙏 **Note**: Please wait! Processing & transcribing can take as long as the audio clip.",
+    "🙏 **Note**: Just a moment... Transcribing can take as long as the audio duration.",
+    "🙏 **Note**: Audio processing and transcription can take roughly the length of your clip.",
+    "🙏 **Note**: Hold on! Transcribing can take about as long as the recording itself.",
+]
+
 
 # ---------------------------------------------------------------------------------------
 with col_right:
@@ -423,6 +431,8 @@ with col_right:
         else:
             with transcription_status_container:
                 st.markdown("Awaiting audio recording...")
+                selected_message = random.choice(messages)
+                st.info(selected_message)
 
 
 
