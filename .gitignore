@@ -1,17 +1,7 @@
 __pycache__/
 *.pyc
 venv/
-.venv/
-env/
 secrets.toml
 code/
 audio/
 transcript/
-.streamlit/
-logs/
-**/streamlit/
-.DS_Store
-*.log
-.ipynb_checkpoints/
-dist/
-build/

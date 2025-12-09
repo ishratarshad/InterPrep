@@ -65,26 +65,24 @@ st.divider()
 
 # ------------- HELPER: COMPUTE OVERALL SCORE -------------
 def compute_overall_score(score):
-    """
-    Use the backend's final_score (0–100) and map it to a friendly label and message.
-    """
-    overall_pct = int(getattr(score, "final_score", 0) or 0)
+    vals = [getattr(score, k, 0) for k in ["problem_id", "complexity", "clarity"]]
+    if not vals:
+        return None, "No score", "No rubric scores were returned."
 
-    if overall_pct >= 90:
-        label = "Excellent"
-        msg = "Outstanding interview-style explanation with strong problem solving and communication."
-    elif overall_pct >= 75:
-        label = "Good"
-        msg = "Solid explanation with room to polish areas like complexity or edge cases."
+    per_dim_max = 3  # scoring scale 1–3
+    overall_ratio = sum(vals) / (len(vals) * per_dim_max)
+    overall_pct = int(round(overall_ratio * 100))
+
+    if overall_pct >= 85:
+        label = "Strong"
+        msg = "Great job — this explanation looks interview-ready with just minor polishing."
     elif overall_pct >= 60:
-        label = "Satisfactory"
-        msg = "Core idea is there, but strengthen structure, complexity analysis, and edge cases."
-    elif overall_pct >= 40:
-        label = "Needs Improvement"
-        msg = "Work on clarifying your approach, complexity, and coverage of test cases."
+        label = "On Track"
+        msg = "You’re on a good path. Some areas need tightening, but the core understanding is there."
     else:
-        label = "Poor"
-        msg = "Focus on fundamentals: restating the problem, explaining your approach, and analyzing complexity."
+        label = "Needs Improvement"
+        msg = "Focus on fundamentals and clarity. Use the rubric to see what to improve in your explanation."
+
     return overall_pct, label, msg
 
 # ----------------- SCORING & RUBRIC TEXT -----------------
@@ -105,13 +103,7 @@ with col1:
                 st.markdown(md)
         except FileNotFoundError:
             st.warning(f"Rubric file {fname} not found.")
-            
-problem_text = st.session_state.get("problem_text", "")
-code_text = ""
-file_path = os.path.join("code", f"user_code.{selected_lang_ext}")
-if os.path.exists(file_path):
-    with open(file_path, "r", encoding="utf-8") as f:
-        code_text = f.read()
+
 # ----------------- LLM SCORING PANEL -----------------
 with col2:
     st.subheader("Transcript Evaluation")
@@ -363,7 +355,6 @@ with col2:
 
 
             st.write("")
-            st.markdown(f"**Bonus / Penalty:** {bonus} &nbsp;&nbsp; | &nbsp;&nbsp; **Raw Score:** {total_raw} / 110")
             st.info(level_msg)
             st.write("")
 
