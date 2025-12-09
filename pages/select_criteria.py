@@ -80,11 +80,10 @@ spc1, col_demo, spc, col_interview, spc2 = st.columns([0.5, 1, 0.25, 1, 0.5])
 
 with col_demo:
     if st.button("Quick Demo", width='stretch'):
-        PROBLEM_ID = random.choice([1, 412, 13, 14, 1796])
+        PROBLEM_ID = random.choice([1, 412, 13, 1796])
             # 412. fizzbuzz
             # 1. two sum
             # 13. roman to integer
-            # 14. longest common prefix
             # 1796. second largest digit in a string
         demo_problem = manager.get_fixed_problem_by_id(PROBLEM_ID)
         if demo_problem:
