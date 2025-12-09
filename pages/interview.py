@@ -59,9 +59,9 @@ difficulty_color = {
 
 # RESET audio file on every new practice/run
 def check_and_clear_stale_audio():
-    if st.session_state.get('wav_audio_data') is not None and not os.path.exists(AUDIO_FILENAME):
-        st.session_state.wav_audio_data = None
-        st.session_state.transcript = None
+    # if st.session_state.get('wav_audio_data') is not None and not os.path.exists(AUDIO_FILENAME):
+    st.session_state.wav_audio_data = None
+    st.session_state.transcript = None
 
 check_and_clear_stale_audio()
 
