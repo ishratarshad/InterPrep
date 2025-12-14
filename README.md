@@ -1,4 +1,4 @@
-# InterPrep: Voice-Interactive AI Interview Trainer
+# InterPrep: Voice-Interactive AI Interview Trainer:
 
 ### Track and refine your technical interview practice.
 ![InterPrep](images/interprep-app.png)
