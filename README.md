@@ -17,7 +17,7 @@ Many students practice LeetCode problems but struggle to explain their thought p
 ---
 ## Visit InterPrep
 ![Visit InterPrep](images/interprep-qr-code.png)
-
+https://interprep-code.streamlit.app/
 ---
 
 ## Tech Stack
